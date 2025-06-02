@@ -27,22 +27,6 @@ function ListView({ data, handleDelete }: ListViewProps) {
     lastModified: "",
     file: "",
   });
-  // const [data, setData] = useState<FileProps[]>([
-  //     {
-  //         id: "a string of characters",
-  //         name: "File 1",
-  //         size: 100,
-  //         lastModified: "2025/06/02",
-  //         file: "aaaaaa"
-  //     },
-  //     {
-  //         id: "a different string of characters",
-  //         name: "File 2",
-  //         size: 250,
-  //         lastModified: "2025/06/02",
-  //         file: "bbbbbb"
-  //     }
-  // ])
 
   const TableHeader = [
     { header: "Name" },

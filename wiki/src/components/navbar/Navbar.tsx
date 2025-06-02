@@ -8,9 +8,14 @@ import {
   Button,
 } from "@mui/material";
 import { useNavigate } from "react-router";
+import Cookies from "js-cookie";
 
 function Navbar() {
   const navigate = useNavigate();
+
+  function handleClick(display: string) {
+    Cookies.set("display", display);
+  }
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -24,10 +29,10 @@ function Navbar() {
               Duncan's Wiki
             </Button>
           </Typography>
-          <IconButton>
+          <IconButton name="list" onClick={() => handleClick("list")}>
             <ListSharp sx={{ color: "white" }} />
           </IconButton>
-          <IconButton>
+          <IconButton name="card" onClick={() => handleClick("card")}>
             <ViewDay sx={{ color: "white" }} />
           </IconButton>
         </Toolbar>

@@ -1,8 +1,10 @@
 import PocketBase from "pocketbase";
-import { Autocomplete, TextField } from "@mui/material";
-import ListView from "../../components/ListView/ListView";
 import { useEffect, useState } from "react";
+import { Autocomplete, TextField } from "@mui/material";
+import Cookies from "js-cookie";
 import type { FileProps } from "../../types/FileType";
+import ListView from "../../components/ListView/ListView";
+import CardView from "../../components/CardView/CardView";
 
 const pb = new PocketBase("http://192.168.1.3:8089");
 
@@ -30,9 +32,10 @@ function Homepage() {
       file: "bbbbbb",
     },
   ]);
-
   const [filter, setFilter] = useState<FileProps[] | null>(null);
 
+  const display = Cookies.get("display");
+  console.log(display);
   //this relies on unique names, not a fan. need to find a way to use ID instead
   function handleFilter(newValue: string | null) {
     if (newValue !== null) {
@@ -47,19 +50,19 @@ function Homepage() {
     setFilter(null);
   }
 
-  async function fetchAll() {
-    try {
-      const records = await pb.collection("Wiki").getFullList();
-      console.log(records);
-      setData(records);
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  // async function fetchAll() {
+  //   try {
+  //     const records = await pb.collection("Wiki").getFullList();
+  //     console.log(records);
+  //     setData(records);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
 
-  useEffect(() => {
-    fetchAll();
-  }, []);
+  // useEffect(() => {
+  //   fetchAll();
+  // }, []);
 
   return (
     <>
@@ -73,10 +76,17 @@ function Homepage() {
             <TextField {...params} label="Search" placeholder="Search" />
           )}
         />
-        <ListView
-          data={filter === null ? data : filter}
-          handleDelete={handleDelete}
-        />
+        {display === "list" ? (
+          <ListView
+            data={filter === null ? data : filter}
+            handleDelete={handleDelete}
+          />
+        ) : (
+          <CardView
+            data={filter === null ? data : filter}
+            handleDelete={handleDelete}
+          />
+        )}
       </div>
     </>
   );
