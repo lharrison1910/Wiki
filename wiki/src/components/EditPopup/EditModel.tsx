@@ -33,10 +33,10 @@ function EditModal({ open, handleClose, file }: ModalProps) {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="flex flex-col justify-center items-center align-middle">
       <Modal open={open} onClose={handleClose}>
         <Box sx={{ bgcolor: "white", color: "black", width: 500, height: 500 }}>
-          <Typography sx={{ color: "black" }}>{file.name}</Typography>
+          <Typography sx={{ color: "black" }}>{file.FileName}</Typography>
           <Divider />
           This will be a drag drop area for the replacement file
           <Button
@@ -45,7 +45,7 @@ function EditModal({ open, handleClose, file }: ModalProps) {
             variant="contained"
             tabIndex={-1}
           >
-            upload file
+            upload new file
             <VisuallyHiddenInput
               type="file"
               onChange={(event) => handleFileChange(event)}

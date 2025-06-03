@@ -7,20 +7,28 @@ import Homepage from "./pages/homepage/Homepage";
 import Errorpage from "./pages/error/Error";
 import Navbar from "./components/navbar/Navbar";
 import Settings from "./pages/settings/Settings";
+import { useState } from "react";
 
 function App() {
-  if (Cookies.get("display") === undefined) {
-    Cookies.set("display", "list");
+  const [display, setDisplay] = useState<string | undefined>(
+    Cookies.get("display")
+  );
+
+  function updateDisplay(updated: string) {
+    setDisplay(updated);
+    if (display !== undefined) {
+      Cookies.set("display", display);
+    }
   }
 
   return (
     <>
       <div className="top-0 mb-2">
-        <Navbar />
+        <Navbar updateDisplay={updateDisplay} />
       </div>
 
       <Routes>
-        <Route path="/" element={<Homepage />} />
+        <Route path="/" element={<Homepage display={display} />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<Errorpage />} />
       </Routes>

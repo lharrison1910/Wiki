@@ -8,13 +8,15 @@ import {
   Button,
 } from "@mui/material";
 import { useNavigate } from "react-router";
-import Cookies from "js-cookie";
 
-function Navbar() {
+interface Props {
+  updateDisplay: (display: string) => void;
+}
+function Navbar({ updateDisplay }: Props) {
   const navigate = useNavigate();
 
   function handleClick(display: string) {
-    Cookies.set("display", display);
+    updateDisplay(display);
   }
 
   return (

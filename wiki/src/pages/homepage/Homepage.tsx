@@ -1,45 +1,72 @@
-import PocketBase from "pocketbase";
+//import PocketBase from "pocketbase";
 import { useEffect, useState } from "react";
-import { Autocomplete, TextField } from "@mui/material";
-import Cookies from "js-cookie";
+import { Autocomplete, Button, TextField } from "@mui/material";
 import type { FileProps } from "../../types/FileType";
 import ListView from "../../components/ListView/ListView";
 import CardView from "../../components/CardView/CardView";
+import { AttachFile } from "@mui/icons-material";
 
-const pb = new PocketBase("http://192.168.1.3:8089");
+//const pb = new PocketBase("http://192.168.1.3:8089");
 
-function Homepage() {
+function Homepage(props: { display: string }) {
+  const display = props.display;
   const [data, setData] = useState<FileProps[]>([
     {
       id: "a string of characters",
-      name: "File 1",
-      size: 100,
+      FileName: "File 1",
+      Size: 100,
       lastModified: "2025/06/02",
       file: "aaaaaa",
     },
     {
       id: "a different string of characters",
-      name: "File 2",
-      size: 250,
+      FileName: "File 2",
+      Size: 250,
       lastModified: "2025/06/02",
       file: "bbbbbb",
     },
     {
       id: "sdafasdfters",
-      name: "File 3",
-      size: 250,
+      FileName: "File 3",
+      Size: 250,
+      lastModified: "2025/06/02",
+      file: "bbbbbb",
+    },
+    {
+      id: "eeeee",
+      FileName: "File 4",
+      Size: 100,
+      lastModified: "2025/06/02",
+      file: "aaaaaa",
+    },
+    {
+      id: "ffff",
+      FileName: "File 5",
+      Size: 250,
+      lastModified: "2025/06/02",
+      file: "bbbbbb",
+    },
+    {
+      id: "sdfgsdfg",
+      FileName: "File 6",
+      Size: 250,
+      lastModified: "2025/06/02",
+      file: "bbbbbb",
+    },
+    {
+      id: "tyuitym",
+      FileName: "File 7",
+      Size: 250,
       lastModified: "2025/06/02",
       file: "bbbbbb",
     },
   ]);
   const [filter, setFilter] = useState<FileProps[] | null>(null);
 
-  const display = Cookies.get("display");
-  console.log(display);
   //this relies on unique names, not a fan. need to find a way to use ID instead
   function handleFilter(newValue: string | null) {
     if (newValue !== null) {
-      setFilter(data.filter((d) => d.name === newValue));
+      setFilter(data.filter((d) => d.FileName === newValue));
     } else {
       setFilter(null);
     }
@@ -71,7 +98,7 @@ function Homepage() {
           sx={{ width: 1 / 2, bgcolor: "white", borderRadius: 6 }}
           disablePortal
           onChange={(_event, newValue) => handleFilter(newValue)}
-          options={data.map((d) => d.name)}
+          options={data.map((d) => d.FileName)}
           renderInput={(params) => (
             <TextField {...params} label="Search" placeholder="Search" />
           )}
@@ -87,6 +114,10 @@ function Homepage() {
             handleDelete={handleDelete}
           />
         )}
+
+        <Button variant="contained" endIcon={<AttachFile />}>
+          Add new File
+        </Button>
       </div>
     </>
   );
