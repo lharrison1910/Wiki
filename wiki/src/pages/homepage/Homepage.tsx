@@ -5,6 +5,7 @@ import type { FileProps } from "../../types/FileType";
 import ListView from "../../components/ListView/ListView";
 import CardView from "../../components/CardView/CardView";
 import { AttachFile } from "@mui/icons-material";
+import { useData } from "../../context/dataContext";
 
 interface FormProps {
   FileName: string;
@@ -14,6 +15,7 @@ interface FormProps {
 }
 
 function Homepage(props: { display: string | undefined }) {
+  const { data } = useData;
   const display = props.display;
   const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -27,7 +29,7 @@ function Homepage(props: { display: string | undefined }) {
     width: 1,
   });
 
-  const [data, setData] = useState<FileProps[]>([]);
+  // const [data, setData] = useState<FileProps[]>([]);
   const [form, setForm] = useState<FormProps>({
     FileName: "",
     Size: 0,
@@ -38,9 +40,9 @@ function Homepage(props: { display: string | undefined }) {
   const [errorMsg, setErrorMsg] = useState<null | string>(null);
   const [successMsg, setSuccessMsg] = useState<null | string>(null);
 
-  useEffect(() => {
-    Read({ setData, setErrorMsg });
-  }, []);
+  // useEffect(() => {
+  //   Read({ setData, setErrorMsg });
+  // }, []);
 
   //this relies on unique names, not a fan. need to find a way to use ID instead
   function handleFilter(newValue: string | null) {
@@ -74,7 +76,7 @@ function Homepage(props: { display: string | undefined }) {
           sx={{ width: 1 / 2, bgcolor: "white", borderRadius: 6 }}
           disablePortal
           onChange={(_event, newValue) => handleFilter(newValue)}
-          options={data.map((d) => d.FileName)}
+          options={data?.map((d) => d.FileName)}
           renderInput={(params) => (
             <TextField {...params} label="Search" placeholder="Search" />
           )}
@@ -97,8 +99,8 @@ function Homepage(props: { display: string | undefined }) {
           variant="contained"
           tabIndex={-1}
           endIcon={<AttachFile />}
-        >-
-          upload file
+        >
+          - upload file
           <VisuallyHiddenInput
             type="file"
             onChange={(event) => handleChange(event)}
