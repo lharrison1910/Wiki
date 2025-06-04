@@ -1,18 +1,22 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { Read } from "../utils/crud";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 import type { FileProps } from "../types/FileType";
 
-interface DataContextProps {
-  data: FileProps[] | null;
-  errorMsg: string | null;
-  successMsg: string | null;
-
+interface DataContextType {
+  data: any;
+  errorMsg: any;
+  successMsg: any;
   addData: (newData: FileProps) => void;
   removeData: (id: string) => void;
   updateData: (newData: FileProps) => void;
 }
 
-const DataContext = createContext<DataContextProps | null>(null);
+const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export function useData() {
   const context = useContext(DataContext);
@@ -22,7 +26,10 @@ export function useData() {
   return context;
 }
 
-export function DataProvider({ children }: any) {
+interface DataProviderProps {
+  children: ReactNode;
+}
+export function DataProvider({ children }: DataProviderProps) {
   const [data, setData] = useState<FileProps[] | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
