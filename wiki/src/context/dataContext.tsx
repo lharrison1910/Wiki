@@ -8,9 +8,9 @@ import {
 import type { FileProps } from "../types/FileType";
 
 interface DataContextType {
-  data: any;
-  errorMsg: any;
-  successMsg: any;
+  data: FileProps[];
+  errorMsg: string | null;
+  successMsg: string | null;
   addData: (newData: FileProps) => void;
   removeData: (id: string) => void;
   updateData: (newData: FileProps) => void;
@@ -30,7 +30,7 @@ interface DataProviderProps {
   children: ReactNode;
 }
 export function DataProvider({ children }: DataProviderProps) {
-  const [data, setData] = useState<FileProps[] | null>(null);
+  const [data, setData] = useState<FileProps[]>([]);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 

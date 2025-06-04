@@ -7,7 +7,7 @@ import { AttachFile } from "@mui/icons-material";
 import { useData } from "../../context/dataContext";
 
 function Homepage(props: { display: string | undefined }) {
-  const { data, removeData, updateData } = useData();
+  const { data, removeData, addData } = useData();
   const display = props.display;
   const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -57,10 +57,9 @@ function Homepage(props: { display: string | undefined }) {
       lastModified: event.target.files[0].lastModifiedDate,
       file: event.target.files[0],
     });
-    updateData(form);
+    addData(form);
   }
 
-  console.log(data);
   return (
     <>
       <div className="flex flex-col justify-center items-center w-full mt-4">
@@ -92,7 +91,7 @@ function Homepage(props: { display: string | undefined }) {
           tabIndex={-1}
           endIcon={<AttachFile />}
         >
-          - upload file
+          upload file
           <VisuallyHiddenInput
             type="file"
             onChange={(event) => handleChange(event)}
