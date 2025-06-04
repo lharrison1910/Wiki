@@ -1,67 +1,46 @@
-//import PocketBase from "pocketbase";
+import { Create, Delete, Read } from "../../utils/crud";
 import { useEffect, useState } from "react";
-import { Autocomplete, Button, TextField } from "@mui/material";
+import { Alert, Autocomplete, Button, styled, TextField } from "@mui/material";
 import type { FileProps } from "../../types/FileType";
 import ListView from "../../components/ListView/ListView";
 import CardView from "../../components/CardView/CardView";
 import { AttachFile } from "@mui/icons-material";
 
-//const pb = new PocketBase("http://192.168.1.3:8089");
+interface FormProps {
+  FileName: string;
+  Size: number;
+  lastModified: string;
+  file: File;
+}
 
-function Homepage(props: { display: string }) {
+function Homepage(props: { display: string | undefined }) {
   const display = props.display;
-  const [data, setData] = useState<FileProps[]>([
-    {
-      id: "a string of characters",
-      FileName: "File 1",
-      Size: 100,
-      lastModified: "2025/06/02",
-      file: "aaaaaa",
-    },
-    {
-      id: "a different string of characters",
-      FileName: "File 2",
-      Size: 250,
-      lastModified: "2025/06/02",
-      file: "bbbbbb",
-    },
-    {
-      id: "sdafasdfters",
-      FileName: "File 3",
-      Size: 250,
-      lastModified: "2025/06/02",
-      file: "bbbbbb",
-    },
-    {
-      id: "eeeee",
-      FileName: "File 4",
-      Size: 100,
-      lastModified: "2025/06/02",
-      file: "aaaaaa",
-    },
-    {
-      id: "ffff",
-      FileName: "File 5",
-      Size: 250,
-      lastModified: "2025/06/02",
-      file: "bbbbbb",
-    },
-    {
-      id: "sdfgsdfg",
-      FileName: "File 6",
-      Size: 250,
-      lastModified: "2025/06/02",
-      file: "bbbbbb",
-    },
-    {
-      id: "tyuitym",
-      FileName: "File 7",
-      Size: 250,
-      lastModified: "2025/06/02",
-      file: "bbbbbb",
-    },
-  ]);
+  const VisuallyHiddenInput = styled("input")({
+    clip: "rect(0 0 0 0)",
+    clipPath: "inset(50%)",
+    height: 1,
+    overflow: "hidden",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    whiteSpace: "nowrap",
+    width: 1,
+  });
+
+  const [data, setData] = useState<FileProps[]>([]);
+  const [form, setForm] = useState<FormProps>({
+    FileName: "",
+    Size: 0,
+    lastModified: "",
+    file: new File(['<q id="a"><span id="b">hey!</span></q>'], ""),
+  });
   const [filter, setFilter] = useState<FileProps[] | null>(null);
+  const [errorMsg, setErrorMsg] = useState<null | string>(null);
+  const [successMsg, setSuccessMsg] = useState<null | string>(null);
+
+  useEffect(() => {
+    Read({ setData, setErrorMsg });
+  }, []);
 
   //this relies on unique names, not a fan. need to find a way to use ID instead
   function handleFilter(newValue: string | null) {
@@ -75,21 +54,18 @@ function Homepage(props: { display: string }) {
   function handleDelete(id: string) {
     setData(data.filter((d) => d.id != id));
     setFilter(null);
+    Delete({ id, setErrorMsg, setSuccessMsg });
   }
 
-  // async function fetchAll() {
-  //   try {
-  //     const records = await pb.collection("Wiki").getFullList();
-  //     console.log(records);
-  //     setData(records);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   fetchAll();
-  // }, []);
+  function handleChange(event: any) {
+    setForm({
+      FileName: event.target.files[0].name,
+      Size: event.target.files[0].size,
+      lastModified: event.target.files[0].lastModifiedDate,
+      file: event.target.files[0],
+    });
+    Create({ form, setErrorMsg, setSuccessMsg });
+  }
 
   return (
     <>
@@ -115,9 +91,31 @@ function Homepage(props: { display: string }) {
           />
         )}
 
-        <Button variant="contained" endIcon={<AttachFile />}>
-          Add new File
+        <Button
+          component="label"
+          role={undefined}
+          variant="contained"
+          tabIndex={-1}
+          endIcon={<AttachFile />}
+        >-
+          upload file
+          <VisuallyHiddenInput
+            type="file"
+            onChange={(event) => handleChange(event)}
+          />
         </Button>
+      </div>
+      <div>
+        {errorMsg != null ? (
+          <Alert severity="error" onClose={() => setErrorMsg(null)}>
+            {errorMsg}
+          </Alert>
+        ) : null}
+        {successMsg != null ? (
+          <Alert severity="success" onClose={() => setSuccessMsg(null)}>
+            {successMsg}
+          </Alert>
+        ) : null}
       </div>
     </>
   );

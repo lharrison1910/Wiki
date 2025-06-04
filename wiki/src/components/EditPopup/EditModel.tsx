@@ -1,4 +1,4 @@
-import { Save } from "@mui/icons-material";
+import { AttachFile, Save } from "@mui/icons-material";
 import { Box, Button, Divider, Modal, styled, Typography } from "@mui/material";
 import { useState } from "react";
 import type { FileProps } from "../../types/FileType";
@@ -44,6 +44,7 @@ function EditModal({ open, handleClose, file }: ModalProps) {
             role={undefined}
             variant="contained"
             tabIndex={-1}
+            endIcon={<AttachFile />}
           >
             upload new file
             <VisuallyHiddenInput
