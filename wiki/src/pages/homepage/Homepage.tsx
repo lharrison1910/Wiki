@@ -7,7 +7,16 @@ import { AttachFile } from "@mui/icons-material";
 import { useData } from "../../context/dataContext";
 
 function Homepage(props: { display: string | undefined }) {
-  const { data, removeData, addData } = useData();
+  const {
+    data,
+    errorMsg,
+    successMsg,
+    setErrorMsg,
+    setSuccessMsg,
+    removeData,
+    addData,
+  } = useData();
+
   const display = props.display;
   const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -22,16 +31,7 @@ function Homepage(props: { display: string | undefined }) {
   });
 
   // const [data, setData] = useState<FileProps[]>([]);
-  const [form, setForm] = useState<FileProps>({
-    id: "",
-    FileName: "",
-    Size: 0,
-    lastModified: "",
-    file: new File(['<q id="a"><span id="b">hey!</span></q>'], ""),
-  });
   const [filter, setFilter] = useState<FileProps[] | null>(null);
-  const [errorMsg, setErrorMsg] = useState<null | string>(null);
-  const [successMsg, setSuccessMsg] = useState<null | string>(null);
 
   //this relies on unique names, not a fan. need to find a way to use ID instead
   function handleFilter(newValue: string | null) {
@@ -50,11 +50,14 @@ function Homepage(props: { display: string | undefined }) {
   }
 
   function handleAdd(event: any) {
-    setForm({
-      ...form,
+    const newFile: FileProps = {
+      id: "",
       FileName: event.target.files[0].name,
-    });
-    addData(form);
+      Size: event.target.files[0].size,
+      lastModified: event.target.files[0].lastModifiedDate.toString(),
+      file: event.target.files[0],
+    };
+    addData(newFile);
   }
 
   return (
@@ -95,6 +98,8 @@ function Homepage(props: { display: string | undefined }) {
           />
         </Button>
       </div>
+
+      {/*feedback */}
       <div>
         {errorMsg != null ? (
           <Alert severity="error" onClose={() => setErrorMsg(null)}>

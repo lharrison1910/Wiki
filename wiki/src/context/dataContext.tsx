@@ -11,6 +11,8 @@ interface DataContextType {
   data: FileProps[];
   errorMsg: string | null;
   successMsg: string | null;
+  setErrorMsg: (msg: string | null) => void;
+  setSuccessMsg: (msg: string | null) => void;
   addData: (newData: FileProps) => void;
   removeData: (id: string) => void;
   updateData: (newData: FileProps) => void;
@@ -89,34 +91,58 @@ export function DataProvider({ children }: DataProviderProps) {
   }, []);
 
   function addData(newData: FileProps) {
-    const temp = data;
-    temp?.push(newData);
-    setData(temp);
+    try {
+      console.log(newData, "here");
+      const temp = data;
+      temp?.push(newData);
+      setData(temp);
+      setSuccessMsg("File added");
+    } catch (error) {
+      setErrorMsg(`Something went wronng: ${error}`);
+    }
   }
 
   function removeData(id: string) {
-    if (data !== null) {
-      setData(data.filter((d) => d.id != id));
+    try {
+      if (data !== null) {
+        setData(data.filter((d) => d.id != id));
+        setSuccessMsg(`File has been removed.`);
+      }
+    } catch (error) {
+      setErrorMsg(`Something went wrong: ${error}`);
     }
   }
 
   function updateData(newData: FileProps) {
-    if (data !== null) {
-      setData(
-        data.map((d) => {
-          if (d.id === newData.id) {
-            return newData;
-          } else {
-            return d;
-          }
-        })
-      );
+    try {
+      if (data !== null) {
+        setData(
+          data.map((d) => {
+            if (d.id === newData.id) {
+              return newData;
+            } else {
+              return d;
+            }
+          })
+        );
+      }
+    } catch (error) {
+      setErrorMsg(`Something went wrong: ${error}`);
     }
   }
 
   return (
     <DataContext.Provider
-      value={{ data, errorMsg, successMsg, addData, removeData, updateData }}
+      value={{
+        data,
+        errorMsg,
+        successMsg,
+        setErrorMsg,
+        setSuccessMsg,
+        addData,
+        removeData,
+        updateData,
+      }}
     >
       {children}
     </DataContext.Provider>
