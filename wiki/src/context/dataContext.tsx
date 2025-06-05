@@ -34,7 +34,6 @@ export function DataProvider({ children }: DataProviderProps) {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  // its not an issue with the fetch, on first render data is null
   useEffect(() => {
     setData([
       {

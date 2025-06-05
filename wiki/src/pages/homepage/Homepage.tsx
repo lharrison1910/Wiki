@@ -49,13 +49,10 @@ function Homepage(props: { display: string | undefined }) {
     setFilter(null);
   }
 
-  function handleChange(event: any) {
+  function handleAdd(event: any) {
     setForm({
       ...form,
       FileName: event.target.files[0].name,
-      Size: event.target.files[0].size,
-      lastModified: event.target.files[0].lastModifiedDate,
-      file: event.target.files[0],
     });
     addData(form);
   }
@@ -94,7 +91,7 @@ function Homepage(props: { display: string | undefined }) {
           upload file
           <VisuallyHiddenInput
             type="file"
-            onChange={(event) => handleChange(event)}
+            onChange={(event) => handleAdd(event)}
           />
         </Button>
       </div>

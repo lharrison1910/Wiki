@@ -1,7 +1,7 @@
-import { AttachFile, Save } from "@mui/icons-material";
+import { AttachFile } from "@mui/icons-material";
 import { Box, Button, Divider, Modal, styled, Typography } from "@mui/material";
-import { useState } from "react";
 import type { FileProps } from "../../types/FileType";
+import { useData } from "../../context/dataContext";
 
 interface ModalProps {
   open: boolean;
@@ -10,7 +10,7 @@ interface ModalProps {
 }
 
 function EditModal({ open, handleClose, file }: ModalProps) {
-  const [selectedFile, setSelectedFile] = useState(null);
+  const { updateData } = useData();
 
   const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -25,11 +25,15 @@ function EditModal({ open, handleClose, file }: ModalProps) {
   });
 
   function handleFileChange(event: any) {
-    setSelectedFile(event?.target?.files[0]);
-  }
-
-  function handleSave() {
-    console.log("replace file with selected file", selectedFile);
+    const form = {
+      id: file.id,
+      FileName: event.target.files[0].name,
+      Size: event.target.files[0].size,
+      lastModified: event.target.files[0].lastModifiedDate,
+      file: event.target.files[0],
+    };
+    console.log(form);
+    updateData(form);
   }
 
   return (
@@ -53,14 +57,6 @@ function EditModal({ open, handleClose, file }: ModalProps) {
             />
           </Button>
           <Divider />
-          <Button
-            variant="contained"
-            endIcon={<Save />}
-            color="success"
-            onClick={handleSave}
-          >
-            Save
-          </Button>
         </Box>
       </Modal>
     </div>
