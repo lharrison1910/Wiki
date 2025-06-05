@@ -125,6 +125,7 @@ export function DataProvider({ children }: DataProviderProps) {
             }
           })
         );
+        console.log(data);
       }
     } catch (error) {
       setErrorMsg(`Something went wrong: ${error}`);

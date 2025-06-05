@@ -32,7 +32,7 @@ function EditModal({ open, handleClose, file }: ModalProps) {
       lastModified: event.target.files[0].lastModifiedDate,
       file: event.target.files[0],
     };
-    console.log(form);
+    console.log(form, "form");
     updateData(form);
   }
 
@@ -41,6 +41,8 @@ function EditModal({ open, handleClose, file }: ModalProps) {
       <Modal open={open} onClose={handleClose}>
         <Box sx={{ bgcolor: "white", color: "black", width: 500, height: 500 }}>
           <Typography sx={{ color: "black" }}>{file.FileName}</Typography>
+          <Typography sx={{ color: "black" }}>{file.Size} kb</Typography>
+          <Typography sx={{ color: "black" }}>{file.lastModified}</Typography>
           <Divider />
           This will be a drag drop area for the replacement file
           <Button
