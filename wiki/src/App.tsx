@@ -14,7 +14,7 @@ function App() {
   const [display, setDisplay] = useState<string | undefined>(
     Cookies.get("display")
   );
-  const pb = new PocketBase("http://192.168.1.3:8089");
+  const pb = new PocketBase("http://127.0.0.1:8089");
   const { setData } = useData();
 
   function updateDisplay(updated: string) {

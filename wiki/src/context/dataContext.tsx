@@ -2,7 +2,7 @@ import { createContext, useContext, useState, type ReactNode } from "react";
 import PocketBase from "pocketbase";
 import type { FileProps } from "../types/FileType";
 
-const pb = new PocketBase("http://192.168.1.3:8089");
+const pb = new PocketBase("http://127.0.0.1:8089");
 
 interface DataContextType {
   data: FileProps[];
