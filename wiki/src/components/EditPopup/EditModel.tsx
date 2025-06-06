@@ -1,7 +1,7 @@
-import { AttachFile, Save } from "@mui/icons-material";
+import { AttachFile } from "@mui/icons-material";
 import { Box, Button, Divider, Modal, styled, Typography } from "@mui/material";
-import { useState } from "react";
 import type { FileProps } from "../../types/FileType";
+import { useData } from "../../context/dataContext";
 
 interface ModalProps {
   open: boolean;
@@ -10,7 +10,7 @@ interface ModalProps {
 }
 
 function EditModal({ open, handleClose, file }: ModalProps) {
-  const [selectedFile, setSelectedFile] = useState(null);
+  const { updateData } = useData();
 
   const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -24,12 +24,19 @@ function EditModal({ open, handleClose, file }: ModalProps) {
     width: 1,
   });
 
-  function handleFileChange(event: any) {
-    setSelectedFile(event?.target?.files[0]);
-  }
-
-  function handleSave() {
-    console.log("replace file with selected file", selectedFile);
+  function handleFileChange(
+    event: { target: { files: File[] } } | React.ChangeEvent<HTMLInputElement>
+  ) {
+    if (event.target.files != null) {
+      const form = {
+        id: file.id,
+        FileName: event.target.files[0].name,
+        Size: event.target.files[0].size,
+        lastModified: event.target.files[0].lastModified.toString(),
+        file: event.target.files[0],
+      };
+      updateData(form);
+    }
   }
 
   return (
@@ -37,6 +44,8 @@ function EditModal({ open, handleClose, file }: ModalProps) {
       <Modal open={open} onClose={handleClose}>
         <Box sx={{ bgcolor: "white", color: "black", width: 500, height: 500 }}>
           <Typography sx={{ color: "black" }}>{file.FileName}</Typography>
+          <Typography sx={{ color: "black" }}>{file.Size} kb</Typography>
+          <Typography sx={{ color: "black" }}>{file.lastModified}</Typography>
           <Divider />
           This will be a drag drop area for the replacement file
           <Button
@@ -53,14 +62,6 @@ function EditModal({ open, handleClose, file }: ModalProps) {
             />
           </Button>
           <Divider />
-          <Button
-            variant="contained"
-            endIcon={<Save />}
-            color="success"
-            onClick={handleSave}
-          >
-            Save
-          </Button>
         </Box>
       </Modal>
     </div>

@@ -2,17 +2,20 @@ import "./App.css";
 
 import { Routes, Route } from "react-router";
 import Cookies from "js-cookie";
-
+import PocketBase from "pocketbase";
 import Homepage from "./pages/homepage/Homepage";
 import Errorpage from "./pages/error/Error";
 import Navbar from "./components/navbar/Navbar";
 import Settings from "./pages/settings/Settings";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useData } from "./context/dataContext";
 
 function App() {
   const [display, setDisplay] = useState<string | undefined>(
     Cookies.get("display")
   );
+  const pb = new PocketBase("http://192.168.1.3:8089");
+  const { setData } = useData();
 
   function updateDisplay(updated: string) {
     setDisplay(updated);
@@ -20,6 +23,13 @@ function App() {
       Cookies.set("display", display);
     }
   }
+
+  useEffect(() => {
+    async function fetchData() {
+      setData(await pb.collection("Wiki").getFullList());
+    }
+    fetchData();
+  }, []);
 
   return (
     <>

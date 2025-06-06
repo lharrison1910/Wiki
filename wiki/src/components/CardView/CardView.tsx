@@ -32,7 +32,6 @@ function CardView({ data, handleDelete }: ListViewProps) {
   };
 
   function handleSelected(index: number) {
-    console.log(data[index]);
     setSelected(data[index]);
     isOpen(true);
   }
