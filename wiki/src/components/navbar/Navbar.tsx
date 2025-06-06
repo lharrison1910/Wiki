@@ -30,6 +30,7 @@ function Navbar({ updateDisplay }: Props) {
             >
               Duncan's Wiki
             </Button>
+            {/* <img src="../../../public/logo.svg" /> */}
           </Typography>
           <IconButton name="list" onClick={() => handleClick("list")}>
             <ListSharp sx={{ color: "white" }} />
