@@ -1,16 +1,14 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, useState, type ReactNode } from "react";
+import PocketBase from "pocketbase";
 import type { FileProps } from "../types/FileType";
+
+const pb = new PocketBase("http://192.168.1.3:8089");
 
 interface DataContextType {
   data: FileProps[];
   errorMsg: string | null;
   successMsg: string | null;
+  setData: (things: FileProps[]) => void;
   setErrorMsg: (msg: string | null) => void;
   setSuccessMsg: (msg: string | null) => void;
   addData: (newData: FileProps) => void;
@@ -36,75 +34,28 @@ export function DataProvider({ children }: DataProviderProps) {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  useEffect(() => {
-    setData([
-      {
-        id: "a string of characters",
-        FileName: "File 1",
-        Size: 100,
-        lastModified: "2025/06/02",
-        file: "aaaaaa",
-      },
-      {
-        id: "a different string of characters",
-        FileName: "File 2",
-        Size: 250,
-        lastModified: "2025/06/02",
-        file: "bbbbbb",
-      },
-      {
-        id: "sdafasdfters",
-        FileName: "File 3",
-        Size: 250,
-        lastModified: "2025/06/02",
-        file: "bbbbbb",
-      },
-      {
-        id: "eeeee",
-        FileName: "File 4",
-        Size: 100,
-        lastModified: "2025/06/02",
-        file: "aaaaaa",
-      },
-      {
-        id: "ffff",
-        FileName: "File 5",
-        Size: 250,
-        lastModified: "2025/06/02",
-        file: "bbbbbb",
-      },
-      {
-        id: "sdfgsdfg",
-        FileName: "File 6",
-        Size: 250,
-        lastModified: "2025/06/02",
-        file: "bbbbbb",
-      },
-      {
-        id: "tyuitym",
-        FileName: "File 7",
-        Size: 250,
-        lastModified: "2025/06/02",
-        file: "bbbbbb",
-      },
-    ]);
-  }, []);
-
-  function addData(newData: FileProps) {
+  async function addData(newData: FileProps) {
     try {
-      console.log(newData, "here");
       const temp = data;
+      const toSend = {
+        FileName: newData.FileName,
+        Size: newData.Size,
+        lastModified: newData.lastModified,
+        file: newData.file,
+      };
       temp?.push(newData);
       setData(temp);
+      await pb.collection("Wiki").create(toSend);
       setSuccessMsg("File added");
     } catch (error) {
       setErrorMsg(`Something went wronng: ${error}`);
     }
   }
 
-  function removeData(id: string) {
+  async function removeData(id: string) {
     try {
       if (data !== null) {
+        await pb.collection("Wiki").delete(id);
         setData(data.filter((d) => d.id != id));
         setSuccessMsg(`File has been removed.`);
       }
@@ -113,20 +64,24 @@ export function DataProvider({ children }: DataProviderProps) {
     }
   }
 
-  function updateData(newData: FileProps) {
+  async function updateData(newData: FileProps) {
     try {
-      if (data !== null) {
-        setData(
-          data.map((d) => {
-            if (d.id === newData.id) {
-              return newData;
-            } else {
-              return d;
-            }
-          })
-        );
-        console.log(data);
-      }
+      await pb.collection("Wiki").update(newData.id, newData);
+      setData(
+        data.map((d) => {
+          if (d.id === newData.id) {
+            return {
+              ...d,
+              FileName: newData.FileName,
+              Size: newData.Size,
+              lastModified: newData.lastModified,
+              file: newData.file,
+            };
+          } else {
+            return d;
+          }
+        })
+      );
     } catch (error) {
       setErrorMsg(`Something went wrong: ${error}`);
     }
@@ -138,6 +93,7 @@ export function DataProvider({ children }: DataProviderProps) {
         data,
         errorMsg,
         successMsg,
+        setData,
         setErrorMsg,
         setSuccessMsg,
         addData,

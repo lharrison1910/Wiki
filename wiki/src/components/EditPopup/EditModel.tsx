@@ -24,16 +24,19 @@ function EditModal({ open, handleClose, file }: ModalProps) {
     width: 1,
   });
 
-  function handleFileChange(event: any) {
-    const form = {
-      id: file.id,
-      FileName: event.target.files[0].name,
-      Size: event.target.files[0].size,
-      lastModified: event.target.files[0].lastModifiedDate,
-      file: event.target.files[0],
-    };
-    console.log(form, "form");
-    updateData(form);
+  function handleFileChange(
+    event: { target: { files: File[] } } | React.ChangeEvent<HTMLInputElement>
+  ) {
+    if (event.target.files != null) {
+      const form = {
+        id: file.id,
+        FileName: event.target.files[0].name,
+        Size: event.target.files[0].size,
+        lastModified: event.target.files[0].lastModified.toString(),
+        file: event.target.files[0],
+      };
+      updateData(form);
+    }
   }
 
   return (
