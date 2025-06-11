@@ -1,0 +1,6 @@
+langchain-community
+pypdf
+ollama
+langchain-mongodb
+pymongo
+langchain_text_splitters
