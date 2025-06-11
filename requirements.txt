@@ -4,3 +4,4 @@ ollama
 langchain-mongodb
 pymongo
 langchain_text_splitters
+langchain-ollama

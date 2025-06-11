@@ -7,8 +7,8 @@ class GenAI():
         self.filename = filename
 
     def embedding(content):
-        embeddings = ollama.embed(model='llama3.2', input=content)
-        return embeddings
+        embeddings = OllamaEmbeddings(model='llama3.2')
+        
 
     def docSplitter(docs):
         textSplitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200, add_start_index=True)
@@ -23,30 +23,46 @@ class GenAI():
         return docs
 
 
--
-documentInput = input("file path for doc: ")
 
-ai = GenAI(documentInput)
+filename = "path to file.pdf"
 
-if ".pdf" in documentInput:
-    docs = loadDoc(documentInput)
-    splits = docSplitter(docs)
-    vectors = []
-    for (split in splits):
-        vecotrs.append(embedding(split.page_content))
+# load pdf
+loader = PyPDFLoader(filename)
+docs = loader.load()
 
-    #add vectors to mongodb
+#split text
+textSplitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+allSplits = textSplitter.split_documents(docs)
+
+#embed chunks
+embeddings = OllamaEmbeddings(model='llama3.2')
+#vectors for only the first bit
+vector 1 = embeddings.embed_query(allSplits[0].page_content)
+
+#add to vector store
+vectorStore = MongoDBAtlastVectorSearch(
+    embedding=embeddings,
+    collection = "collection name"
+    index_name = "name of index search"
+    relevance_score_fn = "cosine"
+)
 
 
-if ".pdf" in documentInput:
-    docs = ai.loadDoc()
-    splits = ai.docSplitter(docs)
-    vectors = []
-    for (split in splits):
-        vectors.append(ai.embedding(split.page_content))
+
+
+from flask import Flask
+
+app = Flask(__name__)
+
+
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8080)
 
 
 
 
 
 # read this: https://python.langchain.com/docs/tutorials/retrievers/#documents-and-document-loaders
+# useful video: https://www.youtube.com/watch?v=JEBDfGqrAUA

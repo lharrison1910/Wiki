@@ -1,10 +1,21 @@
-# Wiki
+# Wiki 2.0
 
 Custom built document storage solution.
 
 ### Tech Stack
 
-- React 19
-- Pocketbase 0.28
+#### Frontend
 
-No backend due to needing to be as light as possible
+- React 19
+
+#### Backend
+
+Docker to run prod
+
+- Flask
+- LangChain for LLM integration
+- Ollama 3.2
+
+#### Database
+
+- Mongodb for vector searching and storage
