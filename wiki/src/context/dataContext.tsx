@@ -45,7 +45,11 @@ export function DataProvider({ children }: DataProviderProps) {
       };
       temp?.push(newData);
       setData(temp);
-      await pb.collection("Wiki").create(toSend);
+      //await pb.collection("Wiki").create(toSend);
+      await fetch("http://localhost:5000/add", {
+        method: "post",
+        body: JSON.stringify(toSend),
+      });
       setSuccessMsg("File added");
     } catch (error) {
       setErrorMsg(`Something went wronng: ${error}`);
