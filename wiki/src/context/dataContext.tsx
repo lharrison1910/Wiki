@@ -1,8 +1,6 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
-import PocketBase from "pocketbase";
+import { client } from "../utils/client/client";
 import type { FileProps } from "../types/FileType";
-
-const pb = new PocketBase("http://192.168.1.3:8089");
 
 interface DataContextType {
   data: FileProps[];
@@ -11,6 +9,7 @@ interface DataContextType {
   setData: (things: FileProps[]) => void;
   setErrorMsg: (msg: string | null) => void;
   setSuccessMsg: (msg: string | null) => void;
+  fetchData: () => void;
   addData: (newData: FileProps) => void;
   removeData: (id: string) => void;
   updateData: (newData: FileProps) => void;
@@ -34,31 +33,50 @@ export function DataProvider({ children }: DataProviderProps) {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
+  async function fetchData() {
+    try {
+      const response = await fetch(`${client}/fetech`);
+      if (!response.ok) {
+        console.log(response.statusText);
+      }
+      const json = await response.json();
+      console.log(json);
+      setData(json);
+    } catch (error) {
+      setErrorMsg(`Something went wrong: ${error}`);
+    }
+  }
+
   async function addData(newData: FileProps) {
     try {
-      const temp = data;
-      const toSend = {
-        FileName: newData.FileName,
-        Size: newData.Size,
-        lastModified: newData.lastModified,
-        file: newData.file,
-      };
-      temp?.push(newData);
-      setData(temp);
-      await pb.collection("Wiki").create(toSend);
-      setSuccessMsg("File added");
+      const response = await fetch(`${client}/post`, {
+        method: "post",
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        setErrorMsg(`Something went wrong: ${response.statusText}`);
+        return;
+      }
+      setData([...data, newData]);
+      setSuccessMsg("Successful upload.");
     } catch (error) {
-      setErrorMsg(`Something went wronng: ${error}`);
+      setErrorMsg(`Something went wrong: ${error}`);
     }
   }
 
   async function removeData(id: string) {
     try {
-      if (data !== null) {
-        await pb.collection("Wiki").delete(id);
-        setData(data.filter((d) => d.id != id));
-        setSuccessMsg(`File has been removed.`);
+      const response = await fetch(`${client}/delete/${id}`, {
+        method: "delete",
+      });
+
+      if (!response.ok) {
+        setErrorMsg(`Something went wrong: ${response.statusText}`);
+        return;
       }
+      setData(data.filter((d) => d.id !== id));
+      setSuccessMsg(`File was removed`);
     } catch (error) {
       setErrorMsg(`Something went wrong: ${error}`);
     }
@@ -66,7 +84,15 @@ export function DataProvider({ children }: DataProviderProps) {
 
   async function updateData(newData: FileProps) {
     try {
-      await pb.collection("Wiki").update(newData.id, newData);
+      const response = await fetch(`${client}/update`, {
+        method: "patch",
+        body: JSON.stringify(newData),
+      });
+      if (!response.ok) {
+        setErrorMsg(`Something went wrong: ${response.statusText}`);
+        return;
+      }
+
       setData(
         data.map((d) => {
           if (d.id === newData.id) {
@@ -82,6 +108,7 @@ export function DataProvider({ children }: DataProviderProps) {
           }
         })
       );
+      setSuccessMsg(`File ${newData.FileName} has been updated`);
     } catch (error) {
       setErrorMsg(`Something went wrong: ${error}`);
     }
@@ -96,6 +123,7 @@ export function DataProvider({ children }: DataProviderProps) {
         setData,
         setErrorMsg,
         setSuccessMsg,
+        fetchData,
         addData,
         removeData,
         updateData,

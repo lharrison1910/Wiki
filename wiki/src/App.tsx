@@ -15,7 +15,7 @@ function App() {
     Cookies.get("display")
   );
   const pb = new PocketBase("http://192.168.1.3:8089");
-  const { setData } = useData();
+  const { fetchData } = useData();
 
   function updateDisplay(updated: string) {
     setDisplay(updated);
@@ -25,9 +25,6 @@ function App() {
   }
 
   useEffect(() => {
-    async function fetchData() {
-      setData(await pb.collection("Wiki").getFullList());
-    }
     fetchData();
   }, []);
 
