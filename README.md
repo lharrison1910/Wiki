@@ -4,7 +4,16 @@ Custom built document storage solution.
 
 ### Tech Stack
 
-- React 19
-- Pocketbase 0.28
+#### Front end
 
-No backend due to needing to be as light as possible
+- React 19
+
+#### Backend
+
+- Flask server
+
+#### Database
+
+- Mongo DB with vector Search
+
+backend and databse has been containerised for ease of deployment.
