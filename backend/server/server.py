@@ -4,6 +4,7 @@ import ollama
 import pymongo
 from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader
 import random
+import requests
 
 '''
 Update to do http requests rather than using the library for easier docker integration
@@ -45,6 +46,14 @@ def ChunkEmbed(file):
 
 
 
+def LLMIntegration():
+    res = requests.post('http://localhost:11434/api/chat', json={
+        "model": 'llama3.2',
+        "prompt": prompt,
+        "stream": False
+    })
+
+    print(res.json())
 
 
 ## server functions
