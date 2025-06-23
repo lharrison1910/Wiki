@@ -90,8 +90,9 @@ function Homepage(props: { display: string | undefined }) {
           variant="contained"
           tabIndex={-1}
           endIcon={<AttachFile />}
+          sx={{ margin: 2, width: 1 / 2, borderRadius: 6, bgcolor: "green" }}
         >
-          upload file
+          New File
           <VisuallyHiddenInput
             type="file"
             onChange={(event) => handleAdd(event)}

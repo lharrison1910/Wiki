@@ -11,5 +11,16 @@ services:
     # volumes:
     #   - dbData:/data/db
 
-  backend:
-    container_name:
+  ollama:
+    container_name: llama3.2
+    image: ollama/ollama:3.2
+    ports:
+      - 11434: 11434
+    volumes:
+      - ollama:/root/.ollama
+    tty: true
+    restart: unless-stopped
+
+volumes:
+  mongo: {}
+  ollama: {}
