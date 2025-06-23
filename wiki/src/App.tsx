@@ -2,7 +2,6 @@ import "./App.css";
 
 import { Routes, Route } from "react-router";
 import Cookies from "js-cookie";
-import PocketBase from "pocketbase";
 import Homepage from "./pages/homepage/Homepage";
 import Errorpage from "./pages/error/Error";
 import Navbar from "./components/navbar/Navbar";
@@ -14,7 +13,6 @@ function App() {
   const [display, setDisplay] = useState<string | undefined>(
     Cookies.get("display")
   );
-  const pb = new PocketBase("http://192.168.1.3:8089");
   const { fetchData } = useData();
 
   function updateDisplay(updated: string) {

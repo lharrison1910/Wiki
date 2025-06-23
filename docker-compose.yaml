@@ -1,3 +1,5 @@
+version: "1"
+
 services:
   mongo:
     container_name: db
@@ -15,11 +17,18 @@ services:
     container_name: llama3.2
     image: ollama/ollama:3.2
     ports:
-      - 11434: 11434
+      - 11434:11434
     volumes:
       - ollama:/root/.ollama
     tty: true
     restart: unless-stopped
+
+  web:
+    build:
+      context: ./Wiki
+      dockerfile: ./Dockerfile
+    ports:
+      - 3000:3000
 
 volumes:
   mongo: {}
