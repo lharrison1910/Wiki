@@ -5,6 +5,7 @@ import ListView from "../../components/ListView/ListView";
 import CardView from "../../components/CardView/CardView";
 import { AttachFile } from "@mui/icons-material";
 import { useData } from "../../context/dataContext";
+import AI from "../../components/AIPopup/AI";
 
 function Homepage(props: { display: string | undefined }) {
   const {
@@ -99,6 +100,7 @@ function Homepage(props: { display: string | undefined }) {
           />
         </Button>
       </div>
+      <AI />
 
       {/*feedback */}
       <div>
