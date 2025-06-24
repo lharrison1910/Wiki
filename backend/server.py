@@ -1,10 +1,11 @@
+#import string
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-import ollama
+#import ollama
 import pymongo
-from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader
-import random
-import requests
+#from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader
+#import random
+#import requests
 
 '''
 Update to do http requests rather than using the library for easier docker integration
@@ -22,38 +23,38 @@ fileDB = mydb["fileData"]
 
 
 
-def generateID():
-    length = 20
-    generated = "".join(random.choice(string.ascii_lowercase) for _ in range(length))
-    return generated
+# def generateID():
+#     length = 20
+#     generated = "".join(random.choice(string.ascii_lowercase) for _ in range(length))
+#     return generated
 
 
-def ChunkEmbed(file):
-    # get file type, either pdf or docx
-    embeddingsData = []
-    if (".pdf" in file.name ):
-        loader = PyPDFLoader(file_path)
-    else:
-        loader = Docx2txtLoader(file_path) 
+# def ChunkEmbed(file):
+#     # get file type, either pdf or docx
+#     embeddingsData = []
+#     if (".pdf" in file.name ):
+#         loader = PyPDFLoader(file_path)
+#     else:
+#         loader = Docx2txtLoader(file_path) 
     
-    for page in loader.load():
-        # I think i need to chunk page_content?
-        page_embeddings = ollama.embed(model='llama3.2', input=page.page_content)["embedding"]
-        #I'm not sure if this will work as expected
-        embeddingsData.append({"id": generateID(), "file": file.id}, "embeddings": {"meta": page["metadata"], "embedding": page_embeddings})
+#     for page in loader.load():
+#         # I think i need to chunk page_content?
+#         page_embeddings = ollama.embed(model='llama3.2', input=page.page_content)["embedding"]
+#         #I'm not sure if this will work as expected
+#         embeddingsData.append({"id": generateID(), "file": file.id}, "embeddings": {"meta": page["metadata"], "embedding": page_embeddings})
 
 
 
 
 
-def LLMIntegration():
-    res = requests.post('http://localhost:11434/api/chat', json={
-        "model": 'llama3.2',
-        "prompt": prompt,
-        "stream": False
-    })
+# def LLMIntegration():
+#     res = requests.post('http://localhost:11434/api/chat', json={
+#         "model": 'llama3.2',
+#         "prompt": prompt,
+#         "stream": False
+#     })
 
-    print(res.json())
+#     print(res.json())
 
 
 ## server functions
@@ -70,6 +71,8 @@ def AddData():
     except:
         return "something went wrong"
     
+    
+    #ChunkEmbed(json["file"])
     #if got this far, send file data to local functions
 
 # delete from db
@@ -109,4 +112,4 @@ def fetchData():
 
 
 if "__main__" == __name__:
-    app.run(host="0.0.0.0", port=5050, debug=True)
+    app.run(debug=True)
