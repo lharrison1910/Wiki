@@ -23,12 +23,8 @@ services:
     tty: true
     restart: unless-stopped
 
-  web:
-    build:
-      context: ./Wiki
-      dockerfile: ./Dockerfile
-    ports:
-      - 3000:3000
+  backend:
+    
 
 volumes:
   mongo: {}

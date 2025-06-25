@@ -112,4 +112,4 @@ def fetchData():
 
 
 if "__main__" == __name__:
-    app.run(debug=True)
+    app.run(debug=True, port=5050, host="0.0.0.0")
