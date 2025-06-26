@@ -1,0 +1,32 @@
+[
+  {
+    "name": "report_q1.pdf",
+    "size": 234567,
+    "last_modified": "2025-04-15T10:30:00Z",
+    "path": "/documents/reports/2025/report_q1.pdf"
+  },
+  {
+    "name": "meeting_notes.docx",
+    "size": 45678,
+    "last_modified": "2025-06-20T14:12:45Z",
+    "path": "/documents/meetings/2025/june/meeting_notes.docx"
+  },
+  {
+    "name": "project_plan.xlsx",
+    "size": 78901,
+    "last_modified": "2025-06-01T09:00:00Z",
+    "path": "/documents/projects/plan/project_plan.docx"
+  },
+  {
+    "name": "invoice_1043.pdf",
+    "size": 12345,
+    "last_modified": "2025-05-30T11:05:22Z",
+    "path": "/documents/invoices/2025/invoice_1043.pdf"
+  },
+  {
+    "name": "client_agreement.docx",
+    "size": 90234,
+    "last_modified": "2025-06-25T08:15:10Z",
+    "path": "/documents/contracts/client_agreement.docx"
+  }
+]
