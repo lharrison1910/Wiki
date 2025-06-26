@@ -35,7 +35,7 @@ export function DataProvider({ children }: DataProviderProps) {
 
   async function fetchData() {
     try {
-      const response = await fetch(`${client}/fetech`);
+      const response = await fetch(`${client}/fetch`);
       if (!response.ok) {
         console.log(response.statusText);
       }
@@ -48,6 +48,7 @@ export function DataProvider({ children }: DataProviderProps) {
   }
 
   async function addData(newData: FileProps) {
+    console.log(newData);
     try {
       const response = await fetch(`${client}/post`, {
         method: "post",

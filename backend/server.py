@@ -47,7 +47,7 @@ fileDB = mydb["fileData"]
 
 
 
-# def LLMIntegration():
+# def LLMIntegration(prompt):
 #     res = requests.post('http://localhost:11434/api/chat', json={
 #         "model": 'llama3.2',
 #         "prompt": prompt,
@@ -63,9 +63,12 @@ def test():
     return "success"
 
 # add to db
-@app.post("/add")
+@app.post("/post")
 def AddData():
     json = request.get_json()
+    file = request.files['file']
+    print(file)
+    print(json)
     try:
         fileDB.insert_one(json)
     except:
