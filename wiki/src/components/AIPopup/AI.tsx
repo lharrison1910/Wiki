@@ -17,6 +17,7 @@ interface ChatType {
 function AI() {
   const [toSend, updateToSend] = useState<string>("");
   const [chat, setChat] = useState<ChatType[]>([]);
+  const [open, isOpen] = useState(false);
 
   async function handleChat() {
     setChat([...chat, { role: "user", text: toSend }]);
@@ -38,49 +39,71 @@ function AI() {
     setChat([]);
   }
 
-  return (
-    <div className="w-64 bg-white shadow-md">
-      <Box>
-        <div className="shadow-md text-black">
-          <IconButton onClick={handleReset}>
-            <RestartAlt fontSize="small" />
-          </IconButton>
-          Chat
-          <IconButton sx={{ marginLeft: 10 }}>
-            <Minimize fontSize="small" />
-          </IconButton>
-          <IconButton>
-            <Close fontSize="small" />
-          </IconButton>
-        </div>
-        <div className="h-72 flex flex-col items-center justify-end ">
-          <div className="w-full text-black overflow-auto border-black border-1">
-            {chat.map((c, index) => (
-              <Paper
-                sx={{ width: "50%", marginLeft: 1, marginTop: 1 }}
-                key={index}
-              >
-                {c.text}
-              </Paper>
-            ))}
-          </div>
+  function handleMinimise() {
+    isOpen(false);
+  }
 
-          <Divider />
-          <TextField
-            sx={{ width: "95%", margin: 1 }}
-            onChange={(event) => updateToSend(event.target.value)}
-          />
-          <Button
-            onClick={handleChat}
-            variant="contained"
-            sx={{ width: "100%" }}
-          >
-            Send
-          </Button>
-        </div>
-      </Box>
-    </div>
-  );
+  function handleClose() {
+    handleReset();
+    handleMinimise();
+  }
+
+  if (open) {
+    return (
+      <div className="w-64 bg-white shadow-md">
+        <Box>
+          <div className="shadow-md text-black">
+            <IconButton onClick={handleReset}>
+              <RestartAlt fontSize="small" />
+            </IconButton>
+            Chat
+            <IconButton sx={{ marginLeft: 13 }} onClick={handleMinimise}>
+              <Minimize fontSize="small" />
+            </IconButton>
+            <IconButton onClick={handleClose}>
+              <Close fontSize="small" />
+            </IconButton>
+          </div>
+          <div className="h-72 flex flex-col items-center justify-end ">
+            <div className="w-full text-black overflow-auto border-black border-1">
+              {chat.map((c, index) => (
+                <Paper
+                  sx={{ width: "50%", marginLeft: 1, marginTop: 1 }}
+                  key={index}
+                >
+                  {c.text}
+                </Paper>
+              ))}
+            </div>
+
+            <Divider />
+            <TextField
+              sx={{ width: "95%", margin: 1 }}
+              onChange={(event) => updateToSend(event.target.value)}
+            />
+            <Button
+              onClick={handleChat}
+              variant="contained"
+              sx={{ width: "100%" }}
+            >
+              Send
+            </Button>
+          </div>
+        </Box>
+      </div>
+    );
+  } else {
+    return (
+      <div className="bg-white  size-15 shadow-md rounded-4xl flex justify-center">
+        <Button
+          sx={{ width: "100%", color: "black" }}
+          onClick={() => isOpen(true)}
+        >
+          AI thing
+        </Button>
+      </div>
+    );
+  }
 }
 
 export default AI;

@@ -93,7 +93,9 @@ function Homepage(props: { display: string | undefined }) {
           />
         </Button>
       </div>
-      <AI />
+      <div className="absolute insert-y-0 right-1">
+        <AI />
+      </div>
 
       {/*feedback */}
       <div>
