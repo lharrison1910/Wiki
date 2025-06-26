@@ -2,6 +2,7 @@ import { AttachFile } from "@mui/icons-material";
 import { Box, Button, Divider, Modal, styled, Typography } from "@mui/material";
 import type { FileProps } from "../../types/FileType";
 import { useData } from "../../context/dataContext";
+import type { ChangeEvent } from "react";
 
 interface ModalProps {
   open: boolean;
@@ -25,17 +26,11 @@ function EditModal({ open, handleClose, file }: ModalProps) {
   });
 
   function handleFileChange(
-    event: { target: { files: File[] } } | React.ChangeEvent<HTMLInputElement>
+    event: ChangeEvent<HTMLInputElement> | { target: { files: File[] } },
+    id: string
   ) {
-    if (event.target.files != null) {
-      const form = {
-        id: file.id,
-        FileName: event.target.files[0].name,
-        Size: event.target.files[0].size,
-        lastModified: event.target.files[0].lastModified.toString(),
-        file: event.target.files[0],
-      };
-      updateData(form);
+    if (event.target.files !== null) {
+      updateData(event.target.files[0], id);
     }
   }
 
@@ -58,7 +53,7 @@ function EditModal({ open, handleClose, file }: ModalProps) {
             upload new file
             <VisuallyHiddenInput
               type="file"
-              onChange={(event) => handleFileChange(event)}
+              onChange={(event) => handleFileChange(event, file.id)}
             />
           </Button>
           <Divider />

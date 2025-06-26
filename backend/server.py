@@ -65,16 +65,19 @@ def test():
 # add to db
 @app.post("/post")
 def AddData():
-    json = request.get_json()
     file = request.files['file']
-    print(file)
-    print(json)
+    data = {
+        "name": file["name"],
+        "size": file["size"],
+        "lastModified": file["lastModified"],
+    }
     try:
-        fileDB.insert_one(json)
+        #save the file on the system and add the filepath to the dict
+        path = f"/files/{file["name"]}"
+        data["file"] = path
+        fileDB.insert_one(data)  
     except:
         return "something went wrong"
-    
-    
     #ChunkEmbed(json["file"])
     #if got this far, send file data to local functions
 
@@ -111,7 +114,6 @@ def fetchData():
 
         data.append(document)
     return jsonify(data)
-
 
 
 if "__main__" == __name__:

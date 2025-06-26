@@ -10,9 +10,9 @@ interface DataContextType {
   setErrorMsg: (msg: string | null) => void;
   setSuccessMsg: (msg: string | null) => void;
   fetchData: () => void;
-  addData: (newData: FileProps) => void;
+  addData: (newData: File) => void;
   removeData: (id: string) => void;
-  updateData: (newData: FileProps) => void;
+  updateData: (newData: File, id: string) => void;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -33,6 +33,18 @@ export function DataProvider({ children }: DataProviderProps) {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
+  function validFile(file: File) {
+    if (!file.type.startsWith("pdf/") || !file.type.startsWith("docx/")) {
+      return "Invalid type, please upload pdf's or docx's only";
+    }
+
+    if (file.size > 1000000) {
+      return "File too large, file must be under 1 MB";
+    }
+
+    return true;
+  }
+
   async function fetchData() {
     try {
       const response = await fetch(`${client}/fetch`);
@@ -40,29 +52,34 @@ export function DataProvider({ children }: DataProviderProps) {
         console.log(response.statusText);
       }
       const json = await response.json();
-      console.log(json);
       setData(json);
     } catch (error) {
       setErrorMsg(`Something went wrong: ${error}`);
     }
   }
 
-  async function addData(newData: FileProps) {
-    console.log(newData);
-    try {
-      const response = await fetch(`${client}/post`, {
-        method: "post",
-        body: JSON.stringify(data),
-      });
+  async function addData(file: File) {
+    const valid = validFile(file);
+    if (valid) {
+      try {
+        const response = await fetch(`${client}/post`, {
+          method: "post",
+          body: JSON.stringify(file),
+        });
 
-      if (!response.ok) {
-        setErrorMsg(`Something went wrong: ${response.statusText}`);
-        return;
+        if (!response.ok) {
+          setErrorMsg(`Something went wrong: ${response.statusText}`);
+          return;
+        }
+        // setData([...data, newData]);
+        setSuccessMsg("Successful upload.");
+        fetchData();
+      } catch (error) {
+        setErrorMsg(`Something went wrong: ${error}`);
       }
-      setData([...data, newData]);
-      setSuccessMsg("Successful upload.");
-    } catch (error) {
-      setErrorMsg(`Something went wrong: ${error}`);
+    } else {
+      setErrorMsg(valid);
+      return;
     }
   }
 
@@ -83,35 +100,25 @@ export function DataProvider({ children }: DataProviderProps) {
     }
   }
 
-  async function updateData(newData: FileProps) {
-    try {
-      const response = await fetch(`${client}/update`, {
-        method: "patch",
-        body: JSON.stringify(newData),
-      });
-      if (!response.ok) {
-        setErrorMsg(`Something went wrong: ${response.statusText}`);
-        return;
+  async function updateData(file: File, id: string) {
+    const valid = validFile(file);
+    if (valid) {
+      try {
+        const response = await fetch(`${client}/update/${id}`, {
+          method: "patch",
+          body: JSON.stringify(file),
+        });
+        if (!response.ok) {
+          setErrorMsg(`Something went wrong: ${response.statusText}`);
+          return;
+        }
+        setSuccessMsg(`File ${file.name} has been updated`);
+        fetchData();
+      } catch (error) {
+        setErrorMsg(`Something went wrong: ${error}`);
       }
-
-      setData(
-        data.map((d) => {
-          if (d.id === newData.id) {
-            return {
-              ...d,
-              FileName: newData.FileName,
-              Size: newData.Size,
-              lastModified: newData.lastModified,
-              file: newData.file,
-            };
-          } else {
-            return d;
-          }
-        })
-      );
-      setSuccessMsg(`File ${newData.FileName} has been updated`);
-    } catch (error) {
-      setErrorMsg(`Something went wrong: ${error}`);
+    } else {
+      setErrorMsg(valid);
     }
   }
 

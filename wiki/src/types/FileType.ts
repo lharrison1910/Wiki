@@ -3,5 +3,5 @@ export type FileProps = {
   FileName: string;
   Size: number;
   lastModified: string;
-  file: string | File;
+  file: string;
 };

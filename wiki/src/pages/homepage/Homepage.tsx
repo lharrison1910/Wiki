@@ -5,7 +5,7 @@ import ListView from "../../components/ListView/ListView";
 import CardView from "../../components/CardView/CardView";
 import { AttachFile } from "@mui/icons-material";
 import { useData } from "../../context/dataContext";
-import AI from "../../components/AIPopup/AI";
+//import AI from "../../components/AIPopup/AI";
 
 function Homepage(props: { display: string | undefined }) {
   const {
@@ -51,14 +51,7 @@ function Homepage(props: { display: string | undefined }) {
   }
 
   function handleAdd(event: any) {
-    const newFile: FileProps = {
-      id: "",
-      FileName: event.target.files[0].name,
-      Size: event.target.files[0].size,
-      lastModified: event.target.files[0].lastModifiedDate.toString(),
-      file: event.target.files[0],
-    };
-    addData(newFile);
+    addData(event.target.files[0]);
   }
 
   return (
@@ -100,7 +93,7 @@ function Homepage(props: { display: string | undefined }) {
           />
         </Button>
       </div>
-      <AI />
+      {/* <AI /> */}
 
       {/*feedback */}
       <div>
