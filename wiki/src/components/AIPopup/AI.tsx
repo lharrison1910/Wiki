@@ -34,23 +34,27 @@ function AI() {
     setChat([...chat, { role: "system", text: json }]);
   }
 
+  function handleReset() {
+    setChat([]);
+  }
+
   return (
     <div className="w-64 bg-white shadow-md">
       <Box>
         <div className="shadow-md text-black">
-          <IconButton>
+          <IconButton onClick={handleReset}>
             <RestartAlt fontSize="small" />
           </IconButton>
           Chat
-          <IconButton>
+          <IconButton sx={{ marginLeft: 10 }}>
             <Minimize fontSize="small" />
           </IconButton>
           <IconButton>
             <Close fontSize="small" />
           </IconButton>
         </div>
-        <div className="h-72 flex flex-col items-center justify-end">
-          <div className="w-full text-black">
+        <div className="h-72 flex flex-col items-center justify-end ">
+          <div className="w-full text-black overflow-auto border-black border-1">
             {chat.map((c, index) => (
               <Paper
                 sx={{ width: "50%", marginLeft: 1, marginTop: 1 }}
@@ -66,7 +70,13 @@ function AI() {
             sx={{ width: "95%", margin: 1 }}
             onChange={(event) => updateToSend(event.target.value)}
           />
-          <Button onClick={handleChat}>Send</Button>
+          <Button
+            onClick={handleChat}
+            variant="contained"
+            sx={{ width: "100%" }}
+          >
+            Send
+          </Button>
         </div>
       </Box>
     </div>
