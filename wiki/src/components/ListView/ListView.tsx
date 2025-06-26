@@ -22,10 +22,10 @@ function ListView({ data, handleDelete }: ListViewProps) {
   const [open, isOpen] = useState(false);
   const [selected, setSelected] = useState<FileProps>({
     id: "",
-    FileName: "",
+    Name: "",
     Size: 0,
     lastModified: "",
-    file: "",
+    Path: "",
   });
 
   const TableHeader = [
@@ -68,7 +68,7 @@ function ListView({ data, handleDelete }: ListViewProps) {
             <TableBody>
               {data.map((fd, index) => (
                 <TableRow key={index}>
-                  <TableCell align="center">{fd.FileName}</TableCell>
+                  <TableCell align="center">{fd.Name}</TableCell>
                   <TableCell align="center">{fd.Size}</TableCell>
                   <TableCell align="center">{fd.lastModified}</TableCell>
                   <TableCell align="center">

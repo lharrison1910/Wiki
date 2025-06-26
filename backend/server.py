@@ -1,5 +1,5 @@
 #import string
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 #import ollama
 import pymongo
@@ -74,7 +74,7 @@ def AddData():
     try:
         #save the file on the system and add the filepath to the dict
         path = f"/files/{file["name"]}"
-        data["file"] = path
+        data["path"] = path
         fileDB.insert_one(data)  
     except:
         return "something went wrong"
@@ -109,11 +109,24 @@ def fetchData():
     for x in fileDB.find():
         document = {
             "id": x["id"],
-            "name": x["name"]
+            "Name": x["name"],
+            "Size": x['size'],
+            "lastModified": x['lastModified'],
+            "path": x['path']
         }
 
         data.append(document)
     return jsonify(data)
+
+
+@app.get("/download/<id>")
+def downloadFile(id):
+    try:
+        file = fileDB.find({}, {"id": id})
+        return send_file(file['path'])
+    except Exception as e:
+        return str(e)
+
 
 
 if "__main__" == __name__:

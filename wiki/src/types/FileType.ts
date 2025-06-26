@@ -1,7 +1,7 @@
 export type FileProps = {
   id: string;
-  FileName: string;
+  Name: string;
   Size: number;
   lastModified: string;
-  file: string;
+  Path: string;
 };

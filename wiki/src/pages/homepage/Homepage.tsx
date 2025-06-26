@@ -37,9 +37,7 @@ function Homepage(props: { display: string | undefined }) {
   //this relies on unique names, not a fan. need to find a way to use ID instead
   function handleFilter(newValue: string | null) {
     if (newValue !== null) {
-      setFilter(
-        data.filter((d: { FileName: string }) => d.FileName === newValue)
-      );
+      setFilter(data.filter((d: { Name: string }) => d.Name === newValue));
     } else {
       setFilter(null);
     }
@@ -61,7 +59,7 @@ function Homepage(props: { display: string | undefined }) {
           sx={{ width: 1 / 2, bgcolor: "white", borderRadius: 6 }}
           disablePortal
           onChange={(_event, newValue) => handleFilter(newValue)}
-          options={data.map((d: { FileName: string }) => d.FileName)}
+          options={data.map((d: { Name: string }) => d.Name)}
           renderInput={(params) => (
             <TextField {...params} label="Search" placeholder="Search" />
           )}

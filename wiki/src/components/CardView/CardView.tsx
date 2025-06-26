@@ -8,9 +8,10 @@ import {
   Typography,
 } from "@mui/material";
 import type { FileProps } from "../../types/FileType";
-import { Delete, Edit } from "@mui/icons-material";
+import { Delete, Download, Edit } from "@mui/icons-material";
 import EditModal from "../EditPopup/EditModel";
 import { useState } from "react";
+import { client } from "../../utils/client/client";
 
 interface ListViewProps {
   data: FileProps[];
@@ -21,10 +22,10 @@ function CardView({ data, handleDelete }: ListViewProps) {
   const [open, isOpen] = useState(false);
   const [selected, setSelected] = useState<FileProps>({
     id: "",
-    FileName: "",
+    Name: "",
     Size: 0,
     lastModified: "",
-    file: "",
+    Path: "",
   });
 
   const handleClose = () => {
@@ -34,6 +35,18 @@ function CardView({ data, handleDelete }: ListViewProps) {
   function handleSelected(index: number) {
     setSelected(data[index]);
     isOpen(true);
+  }
+
+  async function handleDownload(id: string) {
+    await fetch(`${client}/download/${id}`).then((res) => {
+      res.blob().then((blob) => {
+        const fileURL = window.URL.createObjectURL(blob);
+        let alink = document.createElement("a");
+        alink.href = fileURL;
+        alink.download = "Sample.pdf";
+        alink.click();
+      });
+    });
   }
   return (
     <>
@@ -47,7 +60,7 @@ function CardView({ data, handleDelete }: ListViewProps) {
               >
                 <Delete color="error" fontSize="small" />
               </IconButton>
-              <Typography>{d.FileName}</Typography>
+              <Typography>{d.Name}</Typography>
               <Typography>{d.Size} kb</Typography>
               <Typography>Last modified: {d.lastModified}</Typography>
               <Divider />
@@ -56,10 +69,15 @@ function CardView({ data, handleDelete }: ListViewProps) {
               <Button endIcon={<Edit />} onClick={() => handleSelected(index)}>
                 Edit
               </Button>
+              <Button
+                endIcon={<Download />}
+                onClick={() => handleDownload(d.id)}
+              >
+                Download
+              </Button>
             </CardActions>
           </Card>
         ))}
-
         <EditModal open={open} handleClose={handleClose} file={selected} />
       </div>
     </>

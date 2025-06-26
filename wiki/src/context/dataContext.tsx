@@ -29,7 +29,43 @@ interface DataProviderProps {
   children: ReactNode;
 }
 export function DataProvider({ children }: DataProviderProps) {
-  const [data, setData] = useState<FileProps[]>([]);
+  const [data, setData] = useState<FileProps[]>([
+    {
+      id: "adfasdf",
+      Name: "report_q1.pdf",
+      Size: 234567,
+      lastModified: "2025-04-15T10:30:00Z",
+      Path: "/documents/reports/2025/report_q1.pdf",
+    },
+    {
+      id: "kj;.hj,k.",
+      Name: "meeting_notes.docx",
+      Size: 45678,
+      lastModified: "2025-06-20T14:12:45Z",
+      Path: "/documents/meetings/2025/june/meeting_notes.docx",
+    },
+    {
+      id: "52345werg",
+      Name: "project_plan.docx",
+      Size: 78901,
+      lastModified: "2025-06-01T09:00:00Z",
+      Path: "/documents/projects/plan/project_plan.docx",
+    },
+    {
+      id: "6hhndn",
+      Name: "invoice_1043.pdf",
+      Size: 12345,
+      lastModified: "2025-05-30T11:05:22Z",
+      Path: "/documents/invoices/2025/invoice_1043.pdf",
+    },
+    {
+      id: "dfgndfghjhy",
+      Name: "client_agreement.docx",
+      Size: 90234,
+      lastModified: "2025-06-25T08:15:10Z",
+      Path: "/documents/contracts/client_agreement.docx",
+    },
+  ]);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
