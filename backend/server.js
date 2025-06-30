@@ -1,13 +1,14 @@
 import express from "express";
 import cors from "cors";
 import multer from "multer";
-import { MongoClient } from "mongodb";
+import { addData, deleteData, fetchData, updateData } from "./modules/db.js";
 
 // server setup
 const app = express();
-const PORT = 5050;
+const PORT = 3000;
 app.use(cors());
 
+//multer setup
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "./uploads/");
@@ -19,12 +20,6 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-//db connections
-const URL = "mongodb://localhost:27017/";
-const client = new MongoClient(URL);
-const db = client.db("WikiDB");
-const fileDB = db.collection("fileDB");
-
 //test the server is on
 app.get("/", (_req, res) => {
   res.send("test");
@@ -34,50 +29,21 @@ app.get("/", (_req, res) => {
 
 //fetch all data
 app.get("/api", async (_req, res) => {
-  try {
-    const data = fileDB.find({});
-    res.json(data);
-  } catch (error) {
-    console.log(error);
-  }
+  res.json(fetchData());
 });
 
 //post new data
 app.post("/api/post", upload.single("file"), async (req, res) => {
-  try {
-    const doc = {
-      name: req.file.originalname,
-      size: req.file.size,
-      lastModified: req.file.lastModified,
-      path: req.file.destination,
-    };
-    const result = await fileDB.insertOne(doc);
-  } catch (error) {
-    res.json(error);
-  }
-  res.send("successful upload");
+  res.json(addData(req.file));
 });
 
 //update old data
 app.post("/api/patch", upload.single("file"), async (req, res) => {
-  const replacement = {
-    name: req.file.originalname,
-    size: req.file.size,
-    lastModified: req.file.lastModified,
-    path: req.file.destination,
-  };
-
-  const result = await fileDB.replaceOne(req.query.id, replacement);
-  res.json(result);
+  res.json(updateData(req.query.id, req.file));
 });
 
 app.delete("/api/delete", async (req, res) => {
-  try {
-    const result = await fileDB.deleteOne({ _id: req.query.id });
-    res.json(result);
-  } catch (error) {
-    res.json(error);
-  }
+  res.json(deleteData(req.query.id));
 });
 
 //runs server
