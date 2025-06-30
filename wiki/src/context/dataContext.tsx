@@ -69,21 +69,9 @@ export function DataProvider({ children }: DataProviderProps) {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  function validFile(file: File) {
-    if (!file.type.startsWith("pdf/") || !file.type.startsWith("docx/")) {
-      return "Invalid type, please upload pdf's or docx's only";
-    }
-
-    if (file.size > 1000000) {
-      return "File too large, file must be under 1 MB";
-    }
-
-    return true;
-  }
-
   async function fetchData() {
     try {
-      const response = await fetch(`${client}/fetch`);
+      const response = await fetch(`${client}/api`);
       if (!response.ok) {
         console.log(response.statusText);
       }
@@ -94,34 +82,26 @@ export function DataProvider({ children }: DataProviderProps) {
     }
   }
 
-  async function addData(file: File) {
-    const valid = validFile(file);
-    if (valid) {
-      try {
-        const response = await fetch(`${client}/post`, {
-          method: "post",
-          body: JSON.stringify(file),
-        });
+  async function addData(newFile: File) {
+    const formData = new FormData();
+    formData.append("file", newFile);
+    try {
+      const response = await fetch(`${client}/api/post`, {
+        method: "post",
+        body: formData,
+      });
 
-        if (!response.ok) {
-          setErrorMsg(`Something went wrong: ${response.statusText}`);
-          return;
-        }
-        // setData([...data, newData]);
-        setSuccessMsg("Successful upload.");
-        fetchData();
-      } catch (error) {
-        setErrorMsg(`Something went wrong: ${error}`);
+      if (!response.ok) {
+        console.log("problems");
       }
-    } else {
-      setErrorMsg(valid);
-      return;
+    } catch (error) {
+      console.log(error);
     }
   }
 
   async function removeData(id: string) {
     try {
-      const response = await fetch(`${client}/delete/${id}`, {
+      const response = await fetch(`${client}/api/delete/?id=${id}`, {
         method: "delete",
       });
 
@@ -136,25 +116,20 @@ export function DataProvider({ children }: DataProviderProps) {
     }
   }
 
-  async function updateData(file: File, id: string) {
-    const valid = validFile(file);
-    if (valid) {
-      try {
-        const response = await fetch(`${client}/update/${id}`, {
-          method: "patch",
-          body: JSON.stringify(file),
-        });
-        if (!response.ok) {
-          setErrorMsg(`Something went wrong: ${response.statusText}`);
-          return;
-        }
-        setSuccessMsg(`File ${file.name} has been updated`);
-        fetchData();
-      } catch (error) {
-        setErrorMsg(`Something went wrong: ${error}`);
+  async function updateData(newFile: File, id: string) {
+    const formData = new FormData();
+    formData.append("file", newFile);
+    try {
+      const response = await fetch(`${client}/api/patch?id=${id}`, {
+        method: "post",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        setErrorMsg(response.statusText);
       }
-    } else {
-      setErrorMsg(valid);
+    } catch (error) {
+      console.log(error);
     }
   }
 

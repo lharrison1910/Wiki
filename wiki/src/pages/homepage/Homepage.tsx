@@ -48,8 +48,10 @@ function Homepage(props: { display: string | undefined }) {
     setFilter(null);
   }
 
-  function handleAdd(event: any) {
-    addData(event.target.files[0]);
+  function handleAdd(event: React.ChangeEvent<HTMLInputElement>) {
+    if (event.target.files) {
+      addData(event.target.files[0]);
+    }
   }
 
   return (

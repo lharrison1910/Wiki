@@ -27,7 +27,8 @@ services:
     build: ./backend
     ports:
       - 5050:5050
-    volumes: files:/files
+    volumes:
+      - files:/files
 
 volumes:
   mongo: {}
