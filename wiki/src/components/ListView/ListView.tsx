@@ -37,9 +37,9 @@ function ListView({ data, handleDelete }: ListViewProps) {
     { header: "Delete" },
   ];
 
-  const handleClose = () => {
+  function handleClose() {
     isOpen(false);
-  };
+  }
 
   function handleSelected(index: number) {
     setSelected(data[index]);
