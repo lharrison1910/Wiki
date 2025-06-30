@@ -1,30 +1,29 @@
 import express from "express";
+import cors from "cors";
+import multer from "multer";
 import { MongoClient } from "mongodb";
 
 // server setup
 const app = express();
 const PORT = 5050;
-app.use(express.json());
+app.use(cors());
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./uploads/");
+  },
+  filename: function (req, file, cb) {
+    const name = `${Date.now()}-${file.originalname}`;
+    cb(null, name);
+  },
+});
+const upload = multer({ storage });
 
 //db connections
 const URL = "mongodb://localhost:27017/";
 const client = new MongoClient(URL);
 const db = client.db("WikiDB");
 const fileDB = db.collection("fileDB");
-
-// db test
-async function dbTest() {
-  try {
-    await client.connect();
-
-    await client.db("WikiDB").command({ ping: 1 });
-  } catch (error) {
-    console.log(error);
-  } finally {
-    await client.close();
-  }
-}
-dbTest();
 
 //test the server is on
 app.get("/", (_req, res) => {
@@ -34,55 +33,50 @@ app.get("/", (_req, res) => {
 //CRUD operations
 
 //fetch all data
-app.get("/files", async (_req, res) => {
+app.get("/api", async (_req, res) => {
   try {
-    const data = await fileDB.find({});
-    res.send(data);
+    const data = fileDB.find({});
+    res.json(data);
   } catch (error) {
     console.log(error);
   }
 });
 
 //post new data
-app.post("/files/post", async (req, res) => {
+app.post("/api/post", upload.single("file"), async (req, res) => {
   try {
-    const result = await fileDB.insertOne(req.body);
-    res.send(result);
+    const doc = {
+      name: req.file.originalname,
+      size: req.file.size,
+      lastModified: req.file.lastModified,
+      path: req.file.destination,
+    };
+    const result = await fileDB.insertOne(doc);
   } catch (error) {
-    console.log(error);
+    res.json(error);
   }
+  res.send("successful upload");
 });
 
 //update old data
-app.patch("/files/patch", async (req, res) => {
-  try {
-    //save the file to path
-    const path = "";
-    const id = req.body._id;
-    const updateDoc = {
-      name: req.body.name,
-      size: req.body.size,
-      lastModified: req.body.lastModified,
-      path: path,
-    };
-    const result = await fileDB.replaceOne(id, updateDoc);
+app.post("/api/patch", upload.single("file"), async (req, res) => {
+  const replacement = {
+    name: req.file.originalname,
+    size: req.file.size,
+    lastModified: req.file.lastModified,
+    path: req.file.destination,
+  };
 
-    res.send(result);
-  } catch (error) {
-    console.log(error);
-  }
+  const result = await fileDB.replaceOne(req.query.id, replacement);
+  res.json(result);
 });
 
-app.delete("/files/delete", async (req, res) => {
+app.delete("/api/delete", async (req, res) => {
   try {
-    const result = await fileDB.deleteOne({ _id: req.body._id });
-    if (result.deletedCount === 1) {
-      res.send(result);
-    } else {
-      res.send("failed to delete");
-    }
+    const result = await fileDB.deleteOne({ _id: req.query.id });
+    res.json(result);
   } catch (error) {
-    console.log(error);
+    res.json(error);
   }
 });
 
