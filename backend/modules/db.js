@@ -1,4 +1,5 @@
 import { MongoClient } from "mongodb";
+import chunk from "./ChunkEmbed";
 
 const URL = "mongodb://localhost:27017/";
 const client = new MongoClient(URL);
@@ -15,10 +16,17 @@ async function addData(fileData) {
       name: fileData.originalname,
       size: fileData.size,
       lastModified: fileData.lastModified,
-      path: fileData.destination,
+      path: fileData.path,
     };
     const result = await fileDB.insertOne(doc);
-    return result;
+    const embeddings = await chunk(fileData.path);
+    const embedDoc = {
+      reference: result.insertedId,
+      embeddings: embeddings,
+    };
+    const embedResult = await embedDB.insertOne(embedDoc);
+
+    return;
   } catch (error) {
     return error;
   }
@@ -28,6 +36,7 @@ async function addData(fileData) {
 function fetchData() {
   try {
     const data = fileDB.find({});
+    console.log(data);
     return data;
   } catch (error) {
     return error;
@@ -63,12 +72,8 @@ async function deleteData(id) {
 //embedDB
 
 //Create
-async function addEmbed(id, embeddings) {
-  const doc = {
-    reference: id,
-    embeddings: embeddings,
-  };
-  const result = await embedDB.insertOne(doc);
+async function addEmbed(insertDoc) {
+  const result = await embedDB.insertOne(insertDoc);
   return result;
 }
 

@@ -13,22 +13,22 @@ services:
 
   ollama:
     container_name: llama3.2
-    image: ollama/ollama
+    image: ollama/ollama:latest
     ports:
       - 11434:11434
     volumes:
       - ollama:/root/.ollama
     tty: true
     restart: unless-stopped
-    command: ollama run llama3.2
+    # command: "ollama pull llama3.2"
 
-  backend:
-    container_name: backend
-    build: ./backend
-    ports:
-      - 5050:5050
-    volumes:
-      - files:/files
+  # backend:
+  #   container_name: backend
+  #   build: ./backend
+  #   ports:
+  #     - 5050:5050
+  #   volumes:
+  #     - files:/files
 
 volumes:
   mongo: {}

@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import multer from "multer";
 import { addData, deleteData, fetchData, updateData } from "./modules/db.js";
+import { chat } from "./modules/LLM.js";
 
 // server setup
 const app = express();
@@ -10,10 +11,10 @@ app.use(cors());
 
 //multer setup
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: (req, file, cb) => {
     cb(null, "./uploads/");
   },
-  filename: function (req, file, cb) {
+  filename: (req, file, cb) => {
     const name = `${Date.now()}-${file.originalname}`;
     cb(null, name);
   },
@@ -34,7 +35,8 @@ app.get("/api", async (_req, res) => {
 
 //post new data
 app.post("/api/post", upload.single("file"), async (req, res) => {
-  res.json(addData(req.file));
+  const result = await addData(req.file);
+  res.json(result);
 });
 
 //update old data
@@ -44,6 +46,12 @@ app.post("/api/patch", upload.single("file"), async (req, res) => {
 
 app.delete("/api/delete", async (req, res) => {
   res.json(deleteData(req.query.id));
+});
+
+app.post("/api/chat", async (req, res) => {
+  const response = await chat(req.body.text);
+  console.log(response);
+  res.json(response);
 });
 
 //runs server
