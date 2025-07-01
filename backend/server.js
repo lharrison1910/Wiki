@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import multer from "multer";
 import { addData, deleteData, fetchData, updateData } from "./modules/db.js";
-import { chat } from "./modules/LLM.js";
 
 // server setup
 const app = express();

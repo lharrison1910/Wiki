@@ -6,6 +6,7 @@ import CardView from "../../components/CardView/CardView";
 import { AttachFile } from "@mui/icons-material";
 import { useData } from "../../context/dataContext";
 import AI from "../../components/AIPopup/AI";
+import EditModal from "../../components/EditPopup/EditModel";
 
 function Homepage(props: { display: string | undefined }) {
   const {
@@ -33,6 +34,14 @@ function Homepage(props: { display: string | undefined }) {
 
   // const [data, setData] = useState<FileProps[]>([]);
   const [filter, setFilter] = useState<FileProps[] | null>(null);
+  const [open, isOpen] = useState(false);
+  const [selected, setSelected] = useState<FileProps>({
+    id: "",
+    Name: "",
+    Size: 0,
+    lastModified: "",
+    Path: "",
+  });
 
   //this relies on unique names, not a fan. need to find a way to use ID instead
   function handleFilter(newValue: string | null) {
@@ -54,6 +63,10 @@ function Homepage(props: { display: string | undefined }) {
     }
   }
 
+  function handleClose() {
+    isOpen(false);
+  }
+
   return (
     <>
       <div className="flex flex-col justify-center items-center w-full mt-4">
@@ -70,11 +83,15 @@ function Homepage(props: { display: string | undefined }) {
           <ListView
             data={filter === null ? data : filter}
             handleDelete={handleDelete}
+            setSelected={setSelected}
+            isOpen={isOpen}
           />
         ) : (
           <CardView
             data={filter === null ? data : filter}
             handleDelete={handleDelete}
+            setSelected={setSelected}
+            isOpen={isOpen}
           />
         )}
 
@@ -93,7 +110,7 @@ function Homepage(props: { display: string | undefined }) {
           />
         </Button>
       </div>
-      <div className="absolute insert-y-0 right-1">
+      <div className="absolute insert-y-0 right-5">
         <AI />
       </div>
 
@@ -109,6 +126,10 @@ function Homepage(props: { display: string | undefined }) {
             {successMsg}
           </Alert>
         ) : null}
+      </div>
+
+      <div className="">
+        <EditModal open={open} handleClose={handleClose} file={selected} />
       </div>
     </>
   );

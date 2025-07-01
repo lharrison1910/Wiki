@@ -12,13 +12,9 @@ import { Delete, Download, Edit } from "@mui/icons-material";
 import EditModal from "../EditPopup/EditModel";
 import { useState } from "react";
 import { client } from "../../utils/client/client";
+import type { ViewProps } from "../../types/ViewProps";
 
-interface ListViewProps {
-  data: FileProps[];
-  handleDelete: (id: string) => void;
-}
-
-function CardView({ data, handleDelete }: ListViewProps) {
+function CardView({ data, handleDelete }: ViewProps) {
   const [open, isOpen] = useState(false);
   const [selected, setSelected] = useState<FileProps>({
     id: "",
@@ -28,9 +24,9 @@ function CardView({ data, handleDelete }: ListViewProps) {
     Path: "",
   });
 
-  const handleClose = () => {
+  function handleClose() {
     isOpen(false);
-  };
+  }
 
   function handleSelected(index: number) {
     setSelected(data[index]);

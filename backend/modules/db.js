@@ -1,5 +1,5 @@
 import { MongoClient } from "mongodb";
-import chunk from "./ChunkEmbed";
+import chunk from "./ChunkEmbed.js";
 
 const URL = "mongodb://localhost:27017/";
 const client = new MongoClient(URL);
@@ -69,19 +69,6 @@ async function deleteData(id) {
   }
 }
 
-//embedDB
-
-//Create
-async function addEmbed(insertDoc) {
-  const result = await embedDB.insertOne(insertDoc);
-  return result;
-}
-
-//Read
-function fetchEmbed(id) {
-  const data = embedDB.find({});
-}
-
-export { addData, fetchData, updateData, deleteData, addEmbed };
+export { addData, fetchData, updateData, deleteData };
 
 // https://www.mongodb.com/docs/atlas/atlas-vector-search/rag/

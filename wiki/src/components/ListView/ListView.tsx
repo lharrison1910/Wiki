@@ -9,24 +9,16 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { useState } from "react";
-import EditModal from "../EditPopup/EditModel";
-import type { FileProps } from "../../types/FileType";
+import { client } from "../../utils/client/client";
+import type { ViewProps } from "../../types/ViewProps";
 
-interface ListViewProps {
-  data: FileProps[];
-  handleDelete: (id: string) => void;
-}
-
-function ListView({ data, handleDelete }: ListViewProps) {
-  const [open, isOpen] = useState(false);
-  const [selected, setSelected] = useState<FileProps>({
-    id: "",
-    Name: "",
-    Size: 0,
-    lastModified: "",
-    Path: "",
-  });
+function ListView({ data, handleDelete, setSelected, isOpen }: ViewProps) {
+  //   id: "",
+  //   Name: "",
+  //   Size: 0,
+  //   lastModified: "",
+  //   Path: "",
+  // });
 
   const TableHeader = [
     { header: "Name" },
@@ -37,18 +29,21 @@ function ListView({ data, handleDelete }: ListViewProps) {
     { header: "Delete" },
   ];
 
-  function handleClose() {
-    isOpen(false);
-  }
-
   function handleSelected(index: number) {
     setSelected(data[index]);
     isOpen(true);
   }
 
-  function handleDownload(index: number) {
-    console.log("this will download file", data[index]);
-    //fetch(`web address/api/files/Wiki/${data[index].id}/${data[index].file}?download=1`)
+  async function handleDownload(id: string) {
+    await fetch(`${client}/download/${id}`).then((res) => {
+      res.blob().then((blob) => {
+        const fileURL = window.URL.createObjectURL(blob);
+        let alink = document.createElement("a");
+        alink.href = fileURL;
+        alink.download = "Sample.pdf";
+        alink.click();
+      });
+    });
   }
 
   return (
@@ -77,7 +72,7 @@ function ListView({ data, handleDelete }: ListViewProps) {
                     </IconButton>
                   </TableCell>
                   <TableCell align="center">
-                    <IconButton onClick={() => handleDownload(index)}>
+                    <IconButton onClick={() => handleDownload(fd.id)}>
                       <Download />
                     </IconButton>
                   </TableCell>
@@ -95,8 +90,6 @@ function ListView({ data, handleDelete }: ListViewProps) {
           </Table>
         </TableContainer>
       </div>
-
-      <EditModal open={open} handleClose={handleClose} file={selected} />
     </>
   );
 }
