@@ -1,7 +1,14 @@
 import express from "express";
 import cors from "cors";
 import multer from "multer";
-import { addData, deleteData, fetchData, updateData } from "./modules/db.js";
+import {
+  addData,
+  deleteData,
+  fetchData,
+  getCollect,
+  updateData,
+} from "./modules/db.js";
+import { chat } from "./modules/LLM.js";
 
 // server setup
 const app = express();
@@ -11,17 +18,17 @@ app.use(cors());
 //multer setup
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "./uploads/");
+    cb(null, ".\\backend\\uploads");
   },
   filename: (req, file, cb) => {
-    const name = `${Date.now()}-${file.originalname}`;
-    cb(null, name);
+    cb(null, file.originalname);
   },
 });
 const upload = multer({ storage });
 
 //test the server is on
 app.get("/", (_req, res) => {
+  getCollect();
   res.send("test");
 });
 
@@ -34,8 +41,7 @@ app.get("/api", async (_req, res) => {
 
 //post new data
 app.post("/api/post", upload.single("file"), async (req, res) => {
-  const result = await addData(req.file);
-  res.json(result);
+  res.json(addData(req.file));
 });
 
 //update old data
@@ -47,9 +53,8 @@ app.delete("/api/delete", async (req, res) => {
   res.json(deleteData(req.query.id));
 });
 
-app.post("/api/chat", async (req, res) => {
+app.post("/api/chat", express.json(), async (req, res) => {
   const response = await chat(req.body.text);
-  console.log(response);
   res.json(response);
 });
 

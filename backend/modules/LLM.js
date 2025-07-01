@@ -4,7 +4,6 @@ export async function chat(message) {
   const response = await ollama.chat({
     model: "llama3.2",
     stream: false,
-    think: true,
     messages: [
       {
         role: "user",
@@ -12,6 +11,8 @@ export async function chat(message) {
       },
     ],
   });
+
+  return response;
 }
 
 export async function embed(chunk) {

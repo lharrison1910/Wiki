@@ -3,9 +3,16 @@ import chunk from "./ChunkEmbed.js";
 
 const URL = "mongodb://localhost:27017/";
 const client = new MongoClient(URL);
-const db = client.db("WikiDB");
-const fileDB = db.collection("fileDB");
-const embedDB = db.collection("embedDB");
+const database = client.db("WikiDB");
+const fileDB = database.collection("fileData");
+const embedDB = database.collection("embedings");
+
+async function getCollect() {
+  const collections = database.listCollections();
+  for await (const doc of collections) {
+    console.log(doc);
+  }
+}
 
 //fileDB stuff
 
@@ -19,14 +26,15 @@ async function addData(fileData) {
       path: fileData.path,
     };
     const result = await fileDB.insertOne(doc);
-    const embeddings = await chunk(fileData.path);
-    const embedDoc = {
-      reference: result.insertedId,
-      embeddings: embeddings,
-    };
-    const embedResult = await embedDB.insertOne(embedDoc);
+    // const embeddings = await chunk(fileData.path);
+    // const embedDoc = {
+    //   reference: result.insertedId,
+    //   embeddings: embeddings,
+    // };
+    // const embedResult = await embedDB.insertOne(embedDoc);
 
-    return;
+    // return;
+    return result;
   } catch (error) {
     return error;
   }
@@ -35,9 +43,12 @@ async function addData(fileData) {
 //Read
 function fetchData() {
   try {
-    const data = fileDB.find({});
-    console.log(data);
-    return data;
+    fileDB.find(
+      {}.toArray((error, result) => {
+        if (error) throw error;
+        console.log(result);
+      })
+    );
   } catch (error) {
     return error;
   }
@@ -69,6 +80,6 @@ async function deleteData(id) {
   }
 }
 
-export { addData, fetchData, updateData, deleteData };
+export { addData, fetchData, updateData, deleteData, getCollect };
 
 // https://www.mongodb.com/docs/atlas/atlas-vector-search/rag/

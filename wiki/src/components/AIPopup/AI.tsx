@@ -106,4 +106,27 @@ function AI() {
   }
 }
 
+/*
+response from api
+
+{
+  "model": "llama3.2",
+  "created_at": "2025-07-01T20:06:30.7459536Z",
+  "message": {
+    "role": "assistant",
+    "content": "It looks like you're testing to see if I'm working properly. Is there anything specific you'd like to talk about or ask? I'm here to help!"
+  },
+  "done_reason": "stop",
+  "done": true,
+  "total_duration": 23990047100,
+  "load_duration": 23144401400,
+  "prompt_eval_count": 29,
+  "prompt_eval_duration": 516818800,
+  "eval_count": 34,
+  "eval_duration": 326324500
+}
+
+
+*/
+
 export default AI;
