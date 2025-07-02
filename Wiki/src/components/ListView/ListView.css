@@ -1,0 +1,9 @@
+.ListView {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: calc(2 / 3 * 100%);
+  max-width: calc(2 / 3 * 100%);
+  min-width: calc(1 / 2 * 100%);
+  margin: calc(0.25rem * 2);
+}

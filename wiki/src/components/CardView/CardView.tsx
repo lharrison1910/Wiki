@@ -7,34 +7,19 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
-import type { FileProps } from "../../types/FileType";
 import { Delete, Download, Edit } from "@mui/icons-material";
-import EditModal from "../EditPopup/EditModel";
-import { useState } from "react";
 import { client } from "../../utils/client/client";
 import type { ViewProps } from "../../types/ViewProps";
+import "./CardView.css";
 
-function CardView({ data, handleDelete }: ViewProps) {
-  const [open, isOpen] = useState(false);
-  const [selected, setSelected] = useState<FileProps>({
-    id: "",
-    Name: "",
-    Size: 0,
-    lastModified: "",
-    Path: "",
-  });
-
-  function handleClose() {
-    isOpen(false);
-  }
-
-  function handleSelected(index: number) {
+function CardView({ data, handleDelete, setSelected, isOpen }: ViewProps) {
+  const handleSelected = (index: number) => {
     setSelected(data[index]);
     isOpen(true);
-  }
+  };
 
-  async function handleDownload(id: string) {
-    await fetch(`${client}/download/${id}`).then((res) => {
+  const handleDownload = async (name: string) => {
+    await fetch(`${client}/download/${name}`).then((res) => {
       res.blob().then((blob) => {
         const fileURL = window.URL.createObjectURL(blob);
         let alink = document.createElement("a");
@@ -43,10 +28,11 @@ function CardView({ data, handleDelete }: ViewProps) {
         alink.click();
       });
     });
-  }
+  };
+
   return (
     <>
-      <div className="flex flex-wrap justify-center align-middle items-center">
+      <div className="CardView">
         {data.map((d, index) => (
           <Card key={index} sx={{ margin: 2, width: 275 }} component="div">
             <CardContent sx={{ display: "flex", flexDirection: "column" }}>
@@ -67,14 +53,14 @@ function CardView({ data, handleDelete }: ViewProps) {
               </Button>
               <Button
                 endIcon={<Download />}
-                onClick={() => handleDownload(d.id)}
+                onClick={() => handleDownload(d.Name)}
               >
                 Download
               </Button>
             </CardActions>
           </Card>
         ))}
-        <EditModal open={open} handleClose={handleClose} file={selected} />
+        {/* <EditModal open={open} handleClose={handleClose} file={selected} /> */}
       </div>
     </>
   );

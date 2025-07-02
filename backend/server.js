@@ -28,8 +28,7 @@ const upload = multer({ storage });
 
 //test the server is on
 app.get("/", (_req, res) => {
-  getCollect();
-  res.send("test");
+  res.send(1);
 });
 
 //CRUD operations
@@ -57,6 +56,13 @@ app.post("/api/chat", express.json(), async (req, res) => {
   const response = await chat(req.body.text);
   res.json(response);
 });
+
+app.get("/api/download/:file", async (req, res) => {
+  const file = req.params.file;
+  console.log(file);
+  res.download(`./uploads/${file}`);
+});
+// backend / uploads / requiremens.txt;
 
 //runs server
 app.listen(PORT, () => {

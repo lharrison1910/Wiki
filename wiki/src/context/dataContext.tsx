@@ -69,7 +69,7 @@ export function DataProvider({ children }: DataProviderProps) {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  async function fetchData() {
+  const fetchData = async () => {
     try {
       const response = await fetch(`${client}/api`);
       if (!response.ok) {
@@ -80,9 +80,9 @@ export function DataProvider({ children }: DataProviderProps) {
     } catch (error) {
       setErrorMsg(`Something went wrong: ${error}`);
     }
-  }
+  };
 
-  async function addData(newFile: File) {
+  const addData = async (newFile: File) => {
     const formData = new FormData();
     formData.append("file", newFile);
     try {
@@ -97,9 +97,9 @@ export function DataProvider({ children }: DataProviderProps) {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
-  async function removeData(id: string) {
+  const removeData = async (id: string) => {
     try {
       const response = await fetch(`${client}/api/delete/?id=${id}`, {
         method: "delete",
@@ -114,9 +114,9 @@ export function DataProvider({ children }: DataProviderProps) {
     } catch (error) {
       setErrorMsg(`Something went wrong: ${error}`);
     }
-  }
+  };
 
-  async function updateData(newFile: File, id: string) {
+  const updateData = async (newFile: File, id: string) => {
     const formData = new FormData();
     formData.append("file", newFile);
     try {
@@ -131,7 +131,7 @@ export function DataProvider({ children }: DataProviderProps) {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   return (
     <DataContext.Provider

@@ -7,6 +7,7 @@ import { AttachFile } from "@mui/icons-material";
 import { useData } from "../../context/dataContext";
 import AI from "../../components/AIPopup/AI";
 import EditModal from "../../components/EditPopup/EditModel";
+import "./homepage.css";
 
 function Homepage(props: { display: string | undefined }) {
   const {
@@ -44,32 +45,32 @@ function Homepage(props: { display: string | undefined }) {
   });
 
   //this relies on unique names, not a fan. need to find a way to use ID instead
-  function handleFilter(newValue: string | null) {
+  const handleFilter = (newValue: string | null) => {
     if (newValue !== null) {
       setFilter(data.filter((d: { Name: string }) => d.Name === newValue));
     } else {
       setFilter(null);
     }
-  }
+  };
 
-  function handleDelete(id: string) {
+  const handleDelete = (id: string) => {
     removeData(id);
     setFilter(null);
-  }
+  };
 
-  function handleAdd(event: React.ChangeEvent<HTMLInputElement>) {
+  const handleAdd = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       addData(event.target.files[0]);
     }
-  }
+  };
 
-  function handleClose() {
+  const handleClose = () => {
     isOpen(false);
-  }
+  };
 
   return (
     <>
-      <div className="flex flex-col justify-center items-center w-full mt-4">
+      <div className="homepage">
         <Autocomplete
           sx={{ width: 1 / 2, bgcolor: "white", borderRadius: 6 }}
           disablePortal
@@ -109,8 +110,9 @@ function Homepage(props: { display: string | undefined }) {
             onChange={(event) => handleAdd(event)}
           />
         </Button>
+        <EditModal open={open} handleClose={handleClose} file={selected} />
       </div>
-      <div className="absolute insert-y-0 right-5">
+      <div className="AI">
         <AI />
       </div>
 
@@ -126,10 +128,6 @@ function Homepage(props: { display: string | undefined }) {
             {successMsg}
           </Alert>
         ) : null}
-      </div>
-
-      <div className="">
-        <EditModal open={open} handleClose={handleClose} file={selected} />
       </div>
     </>
   );

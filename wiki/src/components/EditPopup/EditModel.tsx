@@ -3,6 +3,7 @@ import { Box, Button, Modal, styled, Typography } from "@mui/material";
 import type { FileProps } from "../../types/FileType";
 import { useData } from "../../context/dataContext";
 import type { ChangeEvent } from "react";
+import "./EditModal.css";
 
 interface ModalProps {
   open: boolean;
@@ -24,29 +25,41 @@ function EditModal({ open, handleClose, file }: ModalProps) {
     whiteSpace: "nowrap",
     width: 1,
   });
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 550,
+    height: 400,
+    bgcolor: "background.paper",
+    border: "2px solid #000",
+    boxShadow: 24,
+    p: 4,
+    color: "black",
+  };
 
-  function handleFileChange(
+  const handleFileChange = (
     event: ChangeEvent<HTMLInputElement> | { target: { files: File[] } },
     id: string
-  ) {
+  ) => {
     if (event.target.files !== null) {
       updateData(event.target.files[0], id);
     }
-  }
+  };
 
   return (
-    <div className="flex flex-col justify-center items-center align-middle">
+    <div className="EditModal">
       <Modal open={open} onClose={handleClose}>
-        <Box sx={{ bgcolor: "white", color: "black", width: 500, height: 350 }}>
-          <Typography sx={{ color: "black" }}>
-            File Name: {file.Name}
-          </Typography>
-          <Typography sx={{ color: "black" }}>Size: {file.Size} kb</Typography>
-          <Typography sx={{ color: "black" }}>
-            Last Modified: {file.lastModified}
-          </Typography>
-          <div className="border border-dotted m-4 h-56 flex flex-col items-center justify-center">
-            This will be a drag drop area for the replacement file
+        <Box sx={style}>
+          <div className="modal-header">
+            <Typography>File Name: {file.Name}</Typography>
+            <Typography>Size: {file.Size} kb</Typography>
+            <Typography>Last Modified: {file.lastModified}</Typography>
+          </div>
+
+          <div className="modal-file">
+            <Typography>This will be a drag and drop eventually</Typography>
             <Button
               component="label"
               role={undefined}

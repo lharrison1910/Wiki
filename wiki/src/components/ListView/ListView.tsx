@@ -12,14 +12,9 @@ import {
 import { client } from "../../utils/client/client";
 import type { ViewProps } from "../../types/ViewProps";
 
-function ListView({ data, handleDelete, setSelected, isOpen }: ViewProps) {
-  //   id: "",
-  //   Name: "",
-  //   Size: 0,
-  //   lastModified: "",
-  //   Path: "",
-  // });
+import "./ListView.css";
 
+function ListView({ data, handleDelete, setSelected, isOpen }: ViewProps) {
   const TableHeader = [
     { header: "Name" },
     { header: "Size (kb)" },
@@ -29,13 +24,13 @@ function ListView({ data, handleDelete, setSelected, isOpen }: ViewProps) {
     { header: "Delete" },
   ];
 
-  function handleSelected(index: number) {
+  const handleSelected = (index: number) => {
     setSelected(data[index]);
     isOpen(true);
-  }
+  };
 
-  async function handleDownload(id: string) {
-    await fetch(`${client}/download/${id}`).then((res) => {
+  const handleDownload = async (name: string) => {
+    await fetch(`${client}/download/${name}`).then((res) => {
       res.blob().then((blob) => {
         const fileURL = window.URL.createObjectURL(blob);
         let alink = document.createElement("a");
@@ -44,11 +39,11 @@ function ListView({ data, handleDelete, setSelected, isOpen }: ViewProps) {
         alink.click();
       });
     });
-  }
+  };
 
   return (
     <>
-      <div className="w-2/3 max-w-2/3 min-w-1/2 m-2  flex justify-center items-center">
+      <div className="ListView">
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
@@ -72,7 +67,7 @@ function ListView({ data, handleDelete, setSelected, isOpen }: ViewProps) {
                     </IconButton>
                   </TableCell>
                   <TableCell align="center">
-                    <IconButton onClick={() => handleDownload(fd.id)}>
+                    <IconButton onClick={() => handleDownload(fd.Name)}>
                       <Download />
                     </IconButton>
                   </TableCell>
@@ -84,9 +79,6 @@ function ListView({ data, handleDelete, setSelected, isOpen }: ViewProps) {
                 </TableRow>
               ))}
             </TableBody>
-            {/* <TableFooter>
-                            How does this look
-                        </TableFooter> */}
           </Table>
         </TableContainer>
       </div>

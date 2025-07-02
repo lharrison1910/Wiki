@@ -1,28 +1,42 @@
 import { Close, Minimize, RestartAlt } from "@mui/icons-material";
-import {
-  Box,
-  Button,
-  Divider,
-  IconButton,
-  Paper,
-  TextField,
-} from "@mui/material";
+import { Box, Button, IconButton, Paper, TextField } from "@mui/material";
 import { useState } from "react";
 import { client } from "../../utils/client/client";
+import "./AI.css";
 
-interface ChatType {
-  role: string;
-  text: string;
+interface ModelProps {
+  model: string;
+  created_at: string;
+  message: {
+    role: string;
+    content: string;
+  };
+  done_reason: string;
+  done: boolean;
+  total_duration: number;
+  load_duration: number;
+  prompt_eval_count: number;
+  prompt_eval_duration: number;
+  eval_count: number;
+  eval_duration: number;
 }
+interface UserProps {
+  message: {
+    role: string;
+    content: string;
+  };
+}
+
 function AI() {
   const [toSend, updateToSend] = useState<string>("");
-  const [chat, setChat] = useState<ChatType[]>([]);
+  const [chat, setChat] = useState<(UserProps | ModelProps)[]>([]);
   const [open, isOpen] = useState(false);
 
   async function handleChat() {
-    setChat([...chat, { role: "user", text: toSend }]);
+    setChat([...chat, { message: { role: "user", content: toSend } }]);
+    updateToSend("");
 
-    const response = await fetch(`${client}/chat`, {
+    const response = await fetch(`${client}/api/chat`, {
       method: "post",
       body: JSON.stringify({ text: toSend }),
     });
@@ -32,7 +46,7 @@ function AI() {
     }
 
     const json = await response.json();
-    setChat([...chat, { role: "system", text: json }]);
+    setChat([...chat, json]);
   }
 
   function handleReset() {
@@ -50,9 +64,9 @@ function AI() {
 
   if (open) {
     return (
-      <div className="w-64 bg-white shadow-md">
+      <div className="chatBox">
         <Box>
-          <div className="shadow-md text-black">
+          <div className="header">
             <IconButton onClick={handleReset}>
               <RestartAlt fontSize="small" />
             </IconButton>
@@ -64,21 +78,21 @@ function AI() {
               <Close fontSize="small" />
             </IconButton>
           </div>
-          <div className="h-72 flex flex-col items-center justify-end ">
-            <div className="w-full text-black overflow-auto border-black border-1">
+          <div className="chat-content">
+            <div className="textBox">
               {chat.map((c, index) => (
                 <Paper
                   sx={{ width: "50%", marginLeft: 1, marginTop: 1 }}
                   key={index}
                 >
-                  {c.text}
+                  {c.message.content}
                 </Paper>
               ))}
             </div>
-
-            <Divider />
             <TextField
               sx={{ width: "95%", margin: 1 }}
+              multiline
+              value={toSend}
               onChange={(event) => updateToSend(event.target.value)}
             />
             <Button
@@ -99,7 +113,7 @@ function AI() {
           sx={{ width: "100%", color: "black" }}
           onClick={() => isOpen(true)}
         >
-          AI thing
+          Sapha
         </Button>
       </div>
     );
@@ -125,8 +139,6 @@ response from api
   "eval_count": 34,
   "eval_duration": 326324500
 }
-
-
 */
 
 export default AI;

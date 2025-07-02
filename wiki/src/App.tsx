@@ -15,12 +15,12 @@ function App() {
   );
   const { fetchData } = useData();
 
-  function updateDisplay(updated: string) {
+  const updateDisplay = (updated: string) => {
     setDisplay(updated);
     if (display !== undefined) {
       Cookies.set("display", display);
     }
-  }
+  };
 
   useEffect(() => {
     fetchData();
@@ -28,7 +28,7 @@ function App() {
 
   return (
     <>
-      <div className="top-0 mb-2">
+      <div className="wrapper">
         <Navbar updateDisplay={updateDisplay} />
       </div>
 

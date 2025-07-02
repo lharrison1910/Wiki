@@ -15,9 +15,9 @@ interface Props {
 function Navbar({ updateDisplay }: Props) {
   const navigate = useNavigate();
 
-  function handleClick(display: string) {
+  const handleClick = (display: string) => {
     updateDisplay(display);
-  }
+  };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -28,7 +28,7 @@ function Navbar({ updateDisplay }: Props) {
               onClick={() => navigate("/")}
               sx={{ color: "white", fontSize: 20 }}
             >
-              Duncan's Wiki
+              SAPfolio
             </Button>
             {/* <img src="../../../public/logo.svg" /> */}
           </Typography>
