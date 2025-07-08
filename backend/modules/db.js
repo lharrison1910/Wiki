@@ -1,11 +1,11 @@
 import { MongoClient } from "mongodb";
 import chunk from "./ChunkEmbed.js";
 
-const URL = "mongodb://localhost:27017/";
+const URL =
+  "mongodb+srv://<username>:<password>G@wiki.2fgyivp.mongodb.net/?retryWrites=true&w=majority&appName=Wiki";
 const client = new MongoClient(URL);
 const database = client.db("WikiDB");
 const fileDB = database.collection("fileData");
-const embedDB = database.collection("embedings");
 
 async function getCollect() {
   const collections = database.listCollections();
@@ -19,21 +19,16 @@ async function getCollect() {
 //Create
 async function addData(fileData) {
   try {
+    const embeddings = await chunk(fileData.path);
     const doc = {
-      name: fileData.originalname,
+      name: fileData.name,
       size: fileData.size,
       lastModified: fileData.lastModified,
       path: fileData.path,
+      embeddings,
     };
-    const result = await fileDB.insertOne(doc);
-    // const embeddings = await chunk(fileData.path);
-    // const embedDoc = {
-    //   reference: result.insertedId,
-    //   embeddings: embeddings,
-    // };
-    // const embedResult = await embedDB.insertOne(embedDoc);
 
-    // return;
+    const result = await fileDB.insertOne(doc);
     return result;
   } catch (error) {
     return error;
@@ -82,4 +77,4 @@ async function deleteData(id) {
 
 export { addData, fetchData, updateData, deleteData, getCollect };
 
-// https://www.mongodb.com/docs/atlas/atlas-vector-search/rag/
+// https://www.youtube.com/watch?v=JEBDfGqrAUA
