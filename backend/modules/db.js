@@ -1,7 +1,7 @@
 import { MongoClient } from "mongodb";
 import chunk from "./ChunkEmbed.js";
 
-const URL = "mongodb://localhost:27017/";
+const URL = "mongodb://admin:admin@localhost:27017/?authMechanism=DEFAULT";
 const client = new MongoClient(URL);
 const database = client.db("WikiDB");
 const fileDB = database.collection("fileData");
@@ -26,29 +26,32 @@ async function addData(fileData) {
       path: fileData.path,
     };
     const result = await fileDB.insertOne(doc);
-    // const embeddings = await chunk(fileData.path);
-    // const embedDoc = {
-    //   reference: result.insertedId,
-    //   embeddings: embeddings,
-    // };
-    // const embedResult = await embedDB.insertOne(embedDoc);
+    if (result.acknowledged) {
+      const embeddings = await chunk(fileData.path);
 
-    // return;
+      const embedDoc = {
+        reference: result.insertedId,
+        embeddings: embeddings,
+      };
+
+      //const embedResults = await embedDB.insertOne(embedDoc);
+    }
+
     return result;
   } catch (error) {
+    console.log(error);
     return error;
   }
 }
 
 //Read
-function fetchData() {
+async function fetchData() {
   try {
-    fileDB.find(
-      {}.toArray((error, result) => {
-        if (error) throw error;
-        console.log(result);
-      })
-    );
+    const result = [];
+    for await (const doc of fileDB.find()) {
+      result.push(doc);
+    }
+    return result;
   } catch (error) {
     return error;
   }

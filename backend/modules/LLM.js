@@ -17,9 +17,9 @@ export async function chat(message) {
 
 export async function embed(chunk) {
   const response = await ollama.embed({
-    modal: "llama3.2",
+    model: "llama3.2",
     input: chunk,
   });
 
-  console.log(response);
+  return response;
 }
