@@ -9,8 +9,6 @@ const app = express();
 const PORT = 3000;
 app.use(cors());
 
-//multer setup
-
 //test the server is on
 app.get("/", (_req, res) => {
   res.send(1);
