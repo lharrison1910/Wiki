@@ -1,6 +1,6 @@
 import express from "express";
 import { querySearch } from "../modules/VectorSearch.js";
-import chat from "../modules/LLM.js";
+import { chat } from "../modules/LLM.js";
 
 export const LLMRoute = express.Router();
 
