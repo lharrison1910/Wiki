@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
 
-import { fetchData, addData } from "../modules/db.js";
+import { fetchData, addData, updateData, deleteData } from "../modules/db.js";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -13,6 +13,12 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+const allowedTypes = [
+  "application/pdf",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/msword",
+];
+
 export const dbRoute = express.Router();
 
 dbRoute.get("/", async (req, res) => {
@@ -21,8 +27,14 @@ dbRoute.get("/", async (req, res) => {
 });
 
 dbRoute.post("/post", upload.single("file"), async (req, res) => {
-  const result = await addData(req.file);
-  res.json(result);
+  if (req.file.size < 16000000) {
+    if (allowedTypes.includes(req.file.mimetype)) {
+      const result = await addData(req.file);
+      res.json(result);
+    }
+    res.send("invalid file type");
+  }
+  res.send("file too big");
 });
 
 dbRoute.post("/patch", upload.single("file"), async (req, res) => {

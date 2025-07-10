@@ -1,14 +1,25 @@
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
+import { DocxLoader } from "@langchain/community/document_loaders/fs/docx";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { embed } from "./LLM.js";
 
 async function chunk(filepath) {
   console.log("loading file....");
-  const loader = new PDFLoader(filepath);
+  const loader = undefined;
+  if (filepath.includes(".pdf")) {
+    loader = new PDFLoader(filepath);
+  } else if (filepath.includes(".docx")) {
+    loader = new DocxLoader(filepath);
+  } else {
+    loader = new DocxLoader(filepath, {
+      type: "doc",
+    });
+  }
+
   const data = await loader.load();
   const splitter = new RecursiveCharacterTextSplitter({
-    chunkSize: 10000,
-    chunkOverlap: 2500,
+    chunkSize: 500,
+    chunkOverlap: 100,
   });
 
   console.log("splitting doc");

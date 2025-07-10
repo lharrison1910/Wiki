@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 
 import { dbRoute } from "./routes/dbRoute.js";
+import { LLMRoute } from "./routes/LLMRoute.js";
 
 // server setup
 const app = express();
@@ -18,17 +19,12 @@ app.get("/", (_req, res) => {
 //CRUD operations
 app.use("/api/db", dbRoute);
 
-app.post("/api/chat", express.json(), async (req, res) => {
-  const response = await chat(req.body.text);
-  res.json(response);
-});
+app.use("/api/LLM", LLMRoute);
 
 app.get("/api/download/:file", async (req, res) => {
   const file = req.params.file;
-  console.log(file);
   res.download(`./uploads/${file}`);
 });
-// backend / uploads / requiremens.txt;
 
 //runs server
 app.listen(PORT, () => {

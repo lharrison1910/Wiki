@@ -1,8 +1,10 @@
 import { MongoClient } from "mongodb";
+import dotenv from "dotenv";
 import chunk from "./ChunkEmbed.js";
 
-const URL =
-  "mongodb+srv://lharrison06:2arayxxvqpBIVj2b@wiki.2fgyivp.mongodb.net/?authMechanism=SCRAM-SHA-1";
+dotenv.config();
+
+const URL = process.env.MONGOSTRING;
 const client = new MongoClient(URL);
 const database = client.db("Wiki");
 const fileDB = database.collection("FileData");
@@ -13,21 +15,18 @@ const embeddingDB = database.collection("embeddingData");
 async function addData(fileData) {
   try {
     const fileResult = await fileDB.insertOne(fileData);
-    if (fileResult.acknowledged) {
-      const docs = await chunk(fileData.path);
-      const embedResult = [];
-      docs.map(async (doc) => {
-        const temp = {
-          refernce: fileResult.insertedId,
-          content: doc.pageContent,
-          embedding: doc.embedding,
-        };
-        embedResult.push(await embeddingDB.insertOne(temp));
-      });
-    }
-    //const result = { fileResult, embedResult };
-
-    //return result;
+    const docs = await chunk(fileData.path);
+    const embedResult = [];
+    docs.map(async (doc) => {
+      const temp = {
+        refernce: fileResult.insertedId,
+        content: doc.pageContent,
+        embedding: doc.embedding,
+      };
+      embedResult.push(await embeddingDB.insertOne(temp));
+    });
+    const result = { fileResult, embedResult };
+    return result;
   } catch (error) {
     console.log(error);
     return error;
