@@ -3,21 +3,30 @@ import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { embed } from "./LLM.js";
 
 async function chunk(filepath) {
-  const loader = new PDFLoader("../uploads/NIP.pdf");
+  console.log("loading file....");
+  const loader = new PDFLoader(filepath);
   const data = await loader.load();
   const splitter = new RecursiveCharacterTextSplitter({
-    chunkSize: 400,
-    chunkOverlap: 20,
+    chunkSize: 10000,
+    chunkOverlap: 2500,
   });
 
+  console.log("splitting doc");
   const docs = await splitter.splitDocuments(data);
 
-  const embeddings = [];
+  const chunks = [];
 
   for (let i = 0; i < docs.length; i++) {
-    const embeddingData = await embed(docs[i].pageContent);
-    embeddings.push({ docInfo: docs[i].metadata, embedding: embeddingData });
+    const embedding = await embed(docs[i].pageContent);
+    console.log(`embed complete of chunk ${i}`);
+    const doc = {
+      pageContent: docs[i].pageContent,
+      embedding: embedding.embeddings[0],
+    };
+
+    chunks.push(doc);
   }
-  return embeddings;
+
+  return chunks;
 }
 export default chunk;

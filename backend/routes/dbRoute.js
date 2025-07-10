@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
 
-import { fetchData } from "../modules/db.js";
+import { fetchData, addData } from "../modules/db.js";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
