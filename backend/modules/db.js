@@ -38,10 +38,9 @@ async function fetchData() {
   try {
     const result = [];
     for await (const doc of fileDB.find()) {
+      doc._id = doc._id.toString();
       result.push(doc);
     }
-
-    console.log(result);
     return result;
   } catch (error) {
     return error;

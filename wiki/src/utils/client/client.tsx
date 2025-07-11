@@ -1,1 +1,1 @@
-export const client = "http://localhost:3000";
+export const client = "http://localhost:3000/api";

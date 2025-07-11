@@ -22,13 +22,13 @@ services:
     restart: unless-stopped
     # command: "ollama pull llama3.2"
 
-  # backend:
-  #   container_name: backend
-  #   build: ./backend
-  #   ports:
-  #     - 5050:5050
-  #   volumes:
-  #     - files:/files
+  backend:
+    container_name: backend
+    build: ./backend
+    ports:
+      - 3000:3000
+    volumes:
+      - files:/backend/uploads
 
 volumes:
   mongo: {}

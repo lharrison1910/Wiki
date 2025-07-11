@@ -35,7 +35,7 @@ export function DataProvider({ children }: DataProviderProps) {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`${client}/api`);
+      const response = await fetch(`${client}/db`);
       if (!response.ok) {
         console.log(response.statusText);
       }
@@ -51,7 +51,7 @@ export function DataProvider({ children }: DataProviderProps) {
     const formData = new FormData();
     formData.append("file", newFile);
     try {
-      const response = await fetch(`${client}/api/post`, {
+      const response = await fetch(`${client}/db/post`, {
         method: "post",
         body: formData,
       });
@@ -66,7 +66,7 @@ export function DataProvider({ children }: DataProviderProps) {
 
   const removeData = async (id: string) => {
     try {
-      const response = await fetch(`${client}/api/delete/?id=${id}`, {
+      const response = await fetch(`${client}/db/delete/?id=${id}`, {
         method: "delete",
       });
 
@@ -74,7 +74,7 @@ export function DataProvider({ children }: DataProviderProps) {
         setErrorMsg(`Something went wrong: ${response.statusText}`);
         return;
       }
-      setData(data.filter((d) => d.id !== id));
+      setData(data.filter((d) => d._id !== id));
       setSuccessMsg(`File was removed`);
     } catch (error) {
       setErrorMsg(`Something went wrong: ${error}`);
@@ -85,7 +85,7 @@ export function DataProvider({ children }: DataProviderProps) {
     const formData = new FormData();
     formData.append("file", newFile);
     try {
-      const response = await fetch(`${client}/api/patch?id=${id}`, {
+      const response = await fetch(`${client}/db/patch?id=${id}`, {
         method: "post",
         body: formData,
       });

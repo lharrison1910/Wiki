@@ -8,4 +8,4 @@ RUN npm install
 
 CMD ["node", "server.js"]
 
-EXPOSE 5050
+EXPOSE 3000

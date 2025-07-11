@@ -37,17 +37,17 @@ function Homepage(props: { display: string | undefined }) {
   const [filter, setFilter] = useState<FileProps[] | null>(null);
   const [open, isOpen] = useState(false);
   const [selected, setSelected] = useState<FileProps>({
-    id: "",
-    Name: "",
-    Size: 0,
-    lastModified: "",
-    Path: "",
+    _id: "",
+    filename: "",
+    size: 0,
   });
 
   //this relies on unique names, not a fan. need to find a way to use ID instead
   const handleFilter = (newValue: string | null) => {
     if (newValue !== null) {
-      setFilter(data.filter((d: { Name: string }) => d.Name === newValue));
+      setFilter(
+        data.filter((d: { filename: string }) => d.filename === newValue)
+      );
     } else {
       setFilter(null);
     }
@@ -75,7 +75,7 @@ function Homepage(props: { display: string | undefined }) {
           sx={{ width: 1 / 2, bgcolor: "white", borderRadius: 6 }}
           disablePortal
           onChange={(_event, newValue) => handleFilter(newValue)}
-          options={data.map((d: { Name: string }) => d.Name)}
+          options={data.map((d: { filename: string }) => d.filename)}
           renderInput={(params) => (
             <TextField {...params} label="Search" placeholder="Search" />
           )}

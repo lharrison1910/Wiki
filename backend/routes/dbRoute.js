@@ -5,7 +5,7 @@ import { fetchData, addData, updateData, deleteData } from "../modules/db.js";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, ".\\uploads");
+    cb(null, "./uploads");
   },
   filename: (req, file, cb) => {
     cb(null, file.originalname);
@@ -23,7 +23,8 @@ export const dbRoute = express.Router();
 
 dbRoute.get("/", async (req, res) => {
   const result = await fetchData();
-  res.send(result);
+  console.log(result);
+  res.json(result);
 });
 
 dbRoute.post("/post", upload.single("file"), async (req, res) => {
@@ -41,6 +42,6 @@ dbRoute.post("/patch", upload.single("file"), async (req, res) => {
   res.json(updateData(req.query.id, req.file));
 });
 
-dbRoute.delete("/api/delete", async (req, res) => {
+dbRoute.delete("/delete", async (req, res) => {
   res.json(deleteData(req.query.id));
 });

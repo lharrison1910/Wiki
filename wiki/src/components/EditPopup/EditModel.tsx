@@ -53,9 +53,8 @@ function EditModal({ open, handleClose, file }: ModalProps) {
       <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
           <div className="modal-header">
-            <Typography>File Name: {file.Name}</Typography>
-            <Typography>Size: {file.Size} kb</Typography>
-            <Typography>Last Modified: {file.lastModified}</Typography>
+            <Typography>File Name: {file.filename}</Typography>
+            <Typography>Size: {file.size} kb</Typography>
           </div>
 
           <div className="modal-file">
@@ -70,7 +69,7 @@ function EditModal({ open, handleClose, file }: ModalProps) {
               upload new file
               <VisuallyHiddenInput
                 type="file"
-                onChange={(event) => handleFileChange(event, file.id)}
+                onChange={(event) => handleFileChange(event, file._id)}
               />
             </Button>
             Supported file types: PDF, Docx. File must be under 1MB

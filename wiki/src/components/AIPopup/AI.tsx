@@ -36,7 +36,7 @@ function AI() {
     setChat([...chat, { message: { role: "user", content: toSend } }]);
     updateToSend("");
 
-    const response = await fetch(`${client}/api/chat`, {
+    const response = await fetch(`${client}/LLM/chat`, {
       method: "post",
       body: JSON.stringify({ text: toSend }),
     });

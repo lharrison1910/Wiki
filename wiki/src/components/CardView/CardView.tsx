@@ -11,23 +11,30 @@ import { Delete, Download, Edit } from "@mui/icons-material";
 import { client } from "../../utils/client/client";
 import type { ViewProps } from "../../types/ViewProps";
 import "./CardView.css";
+import { useData } from "../../context/dataContext";
 
 function CardView({ data, handleDelete, setSelected, isOpen }: ViewProps) {
+  const { setErrorMsg } = useData();
+
   const handleSelected = (index: number) => {
     setSelected(data[index]);
     isOpen(true);
   };
 
-  const handleDownload = async (name: string) => {
-    await fetch(`${client}/download/${name}`).then((res) => {
-      res.blob().then((blob) => {
-        const fileURL = window.URL.createObjectURL(blob);
-        let alink = document.createElement("a");
-        alink.href = fileURL;
-        alink.download = "Sample.pdf";
-        alink.click();
+  const handleDownload = async (filename: string) => {
+    try {
+      await fetch(`${client}/download/${filename}`).then((res) => {
+        res.blob().then((blob) => {
+          const fileURL = window.URL.createObjectURL(blob);
+          let alink = document.createElement("a");
+          alink.href = fileURL;
+          alink.download = filename;
+          alink.click();
+        });
       });
-    });
+    } catch (error: any) {
+      setErrorMsg(error.message);
+    }
   };
 
   return (
@@ -38,13 +45,12 @@ function CardView({ data, handleDelete, setSelected, isOpen }: ViewProps) {
             <CardContent sx={{ display: "flex", flexDirection: "column" }}>
               <IconButton
                 sx={{ position: "relative", left: 200, width: 50 }}
-                onClick={() => handleDelete(d.id)}
+                onClick={() => handleDelete(d._id)}
               >
                 <Delete color="error" fontSize="small" />
               </IconButton>
-              <Typography>{d.Name}</Typography>
-              <Typography>{d.Size} kb</Typography>
-              <Typography>Last modified: {d.lastModified}</Typography>
+              <Typography>{d.filename}</Typography>
+              <Typography>{d.size} kb</Typography>
               <Divider />
             </CardContent>
             <CardActions>
@@ -53,7 +59,7 @@ function CardView({ data, handleDelete, setSelected, isOpen }: ViewProps) {
               </Button>
               <Button
                 endIcon={<Download />}
-                onClick={() => handleDownload(d.Name)}
+                onClick={() => handleDownload(d.filename)}
               >
                 Download
               </Button>
