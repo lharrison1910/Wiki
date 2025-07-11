@@ -44,7 +44,7 @@ export const removeData = async (id: string) => {
       setErrorMsg(`Something went wrong: ${response.statusText}`);
       return;
     }
-    setData(data.filter((d) => d.id !== id));
+    setData(data.filter((d) => d._id !== id));
     setSuccessMsg(`File was removed`);
   } catch (error) {
     setErrorMsg(`Something went wrong: ${error}`);
