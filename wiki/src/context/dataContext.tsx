@@ -65,9 +65,14 @@ export function DataProvider({ children }: DataProviderProps) {
   };
 
   const removeData = async (id: string) => {
+    console.log(id);
     try {
-      const response = await fetch(`${client}/db/delete/?id=${id}`, {
+      const response = await fetch(`${client}/db/delete`, {
         method: "delete",
+        body: JSON.stringify({ id }),
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
 
       if (!response.ok) {
@@ -84,6 +89,7 @@ export function DataProvider({ children }: DataProviderProps) {
   const updateData = async (newFile: File, id: string) => {
     const formData = new FormData();
     formData.append("file", newFile);
+    formData.append("id", id);
     try {
       const response = await fetch(`${client}/db/patch?id=${id}`, {
         method: "post",

@@ -39,9 +39,9 @@ dbRoute.post("/post", upload.single("file"), async (req, res) => {
 });
 
 dbRoute.post("/patch", upload.single("file"), async (req, res) => {
-  res.json(updateData(req.query.id, req.file));
+  res.json(updateData(req.body.id, req.file));
 });
 
-dbRoute.delete("/delete", async (req, res) => {
-  res.json(deleteData(req.query.id));
+dbRoute.delete("/delete", express.json(), async (req, res) => {
+  res.json(deleteData(req.body.id));
 });

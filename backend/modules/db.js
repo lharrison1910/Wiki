@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import dotenv from "dotenv";
 import chunk from "./ChunkEmbed.js";
 
@@ -50,14 +50,7 @@ async function fetchData() {
 //Update
 async function updateData(id, fileData) {
   try {
-    const replacement = {
-      name: fileData.originalname,
-      size: fileData.size,
-      lastModified: fileData.lastModified,
-      path: fileData.destination,
-    };
-    const result = await fileDB.replaceOne(id, replacement);
-
+    const result = await fileDB.replaceOne(id, fileData);
     console.log(result);
     return result;
   } catch (error) {
