@@ -5,13 +5,13 @@ import { embed } from "./LLM.js";
 
 async function chunk(filepath) {
   console.log("loading file....");
-  const loader = undefined;
+  let loader = null;
   if (filepath.includes(".pdf")) {
-    loader = new PDFLoader(filepath);
+    loader = new PDFLoader(`./${filepath}`);
   } else if (filepath.includes(".docx")) {
-    loader = new DocxLoader(filepath);
+    loader = new DocxLoader(`./${filepath}`);
   } else {
-    loader = new DocxLoader(filepath, {
+    loader = new DocxLoader(`./${filepath}`, {
       type: "doc",
     });
   }

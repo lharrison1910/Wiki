@@ -23,8 +23,11 @@ export const dbRoute = express.Router();
 
 dbRoute.get("/", async (req, res) => {
   const result = await fetchData();
-  console.log(result);
-  res.json(result);
+  if (result.items) {
+    res.send(result.items);
+  } else {
+    res.status(500).send("Error fetching data");
+  }
 });
 
 dbRoute.post("/post", upload.single("file"), async (req, res) => {
