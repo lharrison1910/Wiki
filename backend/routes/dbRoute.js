@@ -35,16 +35,29 @@ dbRoute.post("/post", upload.single("file"), async (req, res) => {
     if (allowedTypes.includes(req.file.mimetype)) {
       const result = await addData(req.file);
       res.json(result);
+    } else {
+      res.status(400).send("Invalid file type");
     }
-    res.send("invalid file type");
+  } else {
+    res.status(400).send("File too big");
   }
-  res.send("file too big");
 });
 
-dbRoute.post("/patch", upload.single("file"), async (req, res) => {
-  res.json(updateData(req.body.id, req.file));
-});
+// dbRoute.post("/post", upload.single("file"), async (req, res) => {
+//   if (req.file.size < 16000000) {
+//     if (allowedTypes.includes(req.file.mimetype)) {
+//       const result = await addData(req.file);
+//       res.json(result);
+//     }
+//     res.send("invalid file type");
+//   }
+//   res.send("file too big");
+// });
 
-dbRoute.delete("/delete", express.json(), async (req, res) => {
-  res.json(deleteData(req.body.id));
-});
+// dbRoute.post("/patch", upload.single("file"), async (req, res) => {
+//   res.json(updateData(req.body.id, req.file));
+// });
+
+// dbRoute.delete("/delete", express.json(), async (req, res) => {
+//   res.json(deleteData(req.body.id));
+// });

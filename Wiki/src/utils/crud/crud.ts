@@ -1,69 +1,94 @@
+// import { client } from "../client/client";
+// import { useData } from "../../context/dataContext";
+
+// const { data, setData, setErrorMsg, setSuccessMsg } = useData();
+
+// export const fetchData = async () => {
+//   try {
+//     const response = await fetch(`${client}/api`);
+//     if (!response.ok) {
+//       console.log(response.statusText);
+//     }
+//     const json = await response.json();
+//     setData(json);
+//   } catch (error) {
+//     setErrorMsg(`Something went wrong: ${error}`);
+//   }
+// };
+
+// export const addData = async (newFile: File) => {
+//   console.log(newFile);
+//   const formData = new FormData();
+//   formData.append("file", newFile);
+//   try {
+//     const response = await fetch(`${client}/api/post`, {
+//       method: "post",
+//       body: formData,
+//     });
+
+//     if (!response.ok) {
+//       console.log("problems");
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+
+// export const removeData = async (id: string) => {
+//   try {
+//     const response = await fetch(`${client}/api/delete/?id=${id}`, {
+//       method: "delete",
+//     });
+
+//     if (!response.ok) {
+//       setErrorMsg(`Something went wrong: ${response.statusText}`);
+//       return;
+//     }
+//     setData(data.filter((d) => d._id !== id));
+//     setSuccessMsg(`File was removed`);
+//   } catch (error) {
+//     setErrorMsg(`Something went wrong: ${error}`);
+//   }
+// };
+
+// export const updateData = async (newFile: File, id: string) => {
+//   const formData = new FormData();
+//   formData.append("file", newFile);
+//   try {
+//     const response = await fetch(`${client}/api/patch?id=${id}`, {
+//       method: "post",
+//       body: formData,
+//     });
+
+//     if (!response.ok) {
+//       setErrorMsg(response.statusText);
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+
 import { client } from "../client/client";
-import { useData } from "../../context/dataContext";
 
-const { data, setData, setErrorMsg, setSuccessMsg } = useData();
+export const fetchFiles = async () => {
+  const response = await fetch(`${client}/files`);
 
-export const fetchData = async () => {
-  try {
-    const response = await fetch(`${client}/api`);
-    if (!response.ok) {
-      console.log(response.statusText);
-    }
-    const json = await response.json();
-    setData(json);
-  } catch (error) {
-    setErrorMsg(`Something went wrong: ${error}`);
-  }
+  return await response.json();
 };
 
-export const addData = async (newFile: File) => {
-  console.log(newFile);
+export const addFile = async (newFile: File) => {
   const formData = new FormData();
   formData.append("file", newFile);
   try {
-    const response = await fetch(`${client}/api/post`, {
-      method: "post",
+    await fetch(`http://localhost:8081/repository/Files/${newFile.name}`, {
+      method: "PUT",
       body: formData,
-    });
-
-    if (!response.ok) {
-      console.log("problems");
-    }
+    })
+      .then((res) => console.log(res.statusText))
+      .catch((error) => {
+        console.error("Error uploading file:", error);
+      });
   } catch (error) {
-    console.log(error);
-  }
-};
-
-export const removeData = async (id: string) => {
-  try {
-    const response = await fetch(`${client}/api/delete/?id=${id}`, {
-      method: "delete",
-    });
-
-    if (!response.ok) {
-      setErrorMsg(`Something went wrong: ${response.statusText}`);
-      return;
-    }
-    setData(data.filter((d) => d._id !== id));
-    setSuccessMsg(`File was removed`);
-  } catch (error) {
-    setErrorMsg(`Something went wrong: ${error}`);
-  }
-};
-
-export const updateData = async (newFile: File, id: string) => {
-  const formData = new FormData();
-  formData.append("file", newFile);
-  try {
-    const response = await fetch(`${client}/api/patch?id=${id}`, {
-      method: "post",
-      body: formData,
-    });
-
-    if (!response.ok) {
-      setErrorMsg(response.statusText);
-    }
-  } catch (error) {
-    console.log(error);
+    console.error("Error uploading file:", error);
   }
 };
