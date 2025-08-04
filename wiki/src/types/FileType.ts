@@ -1,5 +1,7 @@
-export type FileProps = {
-  _id: string;
-  filename: string;
-  size: number;
+export type FileType = {
+  id: string;
+  downloadUrl: string;
+  path: string;
+  lastModified: string;
+  filesize: number;
 };
