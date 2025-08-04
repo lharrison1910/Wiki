@@ -85,18 +85,13 @@ export const addFile = async (
   const formData = new FormData();
   formData.append("file", newFile);
   try {
-    await fetch(`http://localhost:8081/repository/Files/${newFile.name}`, {
-      method: "PUT",
-      headers: {
-        Authorization: "Basic YWRtaW46YWRtaW4=",
-        "Access-Control-Allow-origin": "*",
-      },
+    await fetch(`${client}/files/upload`, {
+      method: "POST",
       body: formData,
-      redirect: "follow",
     })
       .then((res) => console.log(res.statusText))
       .catch((error) => {
-        setErrorMsg(`Error uploading file: ${error}`);
+        console.log(error);
         throw new Error(`Error uploading file: ${error}`);
       });
     setSuccessMsg(`Successfully uploaded File`);
