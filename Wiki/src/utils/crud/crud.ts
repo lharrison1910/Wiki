@@ -68,27 +68,52 @@
 //   }
 // };
 
+import type { Dispatch, SetStateAction } from "react";
 import { client } from "../client/client";
 
 export const fetchFiles = async () => {
   const response = await fetch(`${client}/files`);
-
   return await response.json();
 };
 
-export const addFile = async (newFile: File) => {
+export const addFile = async (
+  newFile: File,
+  setErrorMsg: Dispatch<SetStateAction<string | null>>,
+  setSuccessMsg: Dispatch<SetStateAction<string | null>>
+) => {
+  console.log(newFile);
   const formData = new FormData();
   formData.append("file", newFile);
   try {
     await fetch(`http://localhost:8081/repository/Files/${newFile.name}`, {
       method: "PUT",
+      headers: {
+        Authorization: "Basic YWRtaW46YWRtaW4=",
+        "Access-Control-Allow-origin": "*",
+      },
       body: formData,
+      redirect: "follow",
     })
       .then((res) => console.log(res.statusText))
       .catch((error) => {
-        console.error("Error uploading file:", error);
+        setErrorMsg(`Error uploading file: ${error}`);
+        throw new Error(`Error uploading file: ${error}`);
       });
+    setSuccessMsg(`Successfully uploaded File`);
   } catch (error) {
     console.error("Error uploading file:", error);
+    setErrorMsg(`Error uploading file: ${error}`);
   }
+};
+
+export const deleteFile = async (id: string) => {
+  return await fetch(`${client}/files/delete`, {
+    method: "Delete",
+    body: JSON.stringify({ id }),
+  })
+    .then((res) => res.text())
+    .catch((error) => {
+      console.log(`Error occured: ${error}`);
+      throw new Error(`Error occured: ${error}`);
+    });
 };

@@ -1,33 +1,4 @@
 import express from "express";
-import multer from "multer";
-import fs from "fs";
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "./uploads");
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  },
-});
-const upload = multer({ storage });
-
-const nexusUpload = async (fileData) => {
-  const response = await fetch(
-    `http://localhost:8081/repository/Files/${fileData.originalname}`,
-    {
-      method: "PUT",
-      headers: {
-        Authorization: "Basic YWRtaW46YWRtaW4=",
-      },
-      body: fileData,
-    }
-  ).catch((error) => {
-    console.error("Error uploading file:", error);
-  });
-  console.log("Upload complete");
-  return response;
-};
 
 export const fileRoute = express.Router();
 
