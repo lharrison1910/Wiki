@@ -13,10 +13,14 @@ import { useState } from "react";
 import { Delete, Download, FileOpen } from "@mui/icons-material";
 import { download } from "../../utils/download/download";
 import { deleteFile } from "../../utils/crud/crud";
+import type { FileType } from "../../types/FileType";
+import { View } from "../../utils/View/view";
 
-function TableView(props: { files: any }) {
-  let files = props.files;
-  const [openMenu, setOpenMenu] = useState<boolean>(false);
+function TableView(props: { files: FileType[] }) {
+  const files = props.files;
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
   return (
     <>
       <Table sx={{ width: 2 / 3, bgcolor: "white", margin: 4 }}>
@@ -24,28 +28,52 @@ function TableView(props: { files: any }) {
           <TableRow>
             <TableCell align="center">Name</TableCell>
             <TableCell align="center">Size (Bytes)</TableCell>
-            <TableCell align="center">Last Modified</TableCell>
             <TableCell align="center">Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {files.map((file: any) => (
-            <TableRow key={file.id}>
-              <TableCell align="center">{file.path}</TableCell>
-              <TableCell align="center">{file.fileSize}</TableCell>
-              <TableCell align="center">{file.lastModified}</TableCell>
+          {files.map((file: FileType) => (
+            <TableRow key={file._id}>
+              <TableCell align="center">{file.filename}</TableCell>
+              <TableCell align="center">{file.size}</TableCell>
               <TableCell align="center">
-                <IconButton onClick={() => setOpenMenu(true)}>
+                <IconButton
+                  onClick={(event) => setAnchorEl(event.currentTarget)}
+                >
                   <MenuIcon />
-                  <Menu open={openMenu} onClose={() => setOpenMenu(false)}>
-                    <MenuItem>
-                      <FileOpen /> View
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={() => setAnchorEl(null)}
+                    slotProps={{
+                      list: {
+                        "aria-labelledby": "basic-button",
+                      },
+                    }}
+                  >
+                    <MenuItem
+                      onClick={() => {
+                        setAnchorEl(null);
+                        View(file.filename);
+                      }}
+                    >
+                      <FileOpen /> Open
                     </MenuItem>
-                    <MenuItem onClick={() => download(file.downloadUrl)}>
+                    <MenuItem
+                      onClick={() => {
+                        setAnchorEl(null);
+                        download(file.filename);
+                      }}
+                    >
                       <Download color="success" />
                       Download
                     </MenuItem>
-                    <MenuItem onClick={() => deleteFile(file.id)}>
+                    <MenuItem
+                      onClick={() => {
+                        setAnchorEl(null);
+                        deleteFile(file._id);
+                      }}
+                    >
                       <Delete color="error" />
                       Delete
                     </MenuItem>

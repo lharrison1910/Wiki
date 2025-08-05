@@ -23,16 +23,6 @@ app.use("/api/db", dbRoute);
 
 app.use("/api/LLM", LLMRoute);
 
-app.get("/api/download/:file", async (req, res) => {
-  const file = req.params.file;
-  res.download(`./uploads/${file}`);
-});
-
-app.post("/test/:file", fileUpload(), async (req, res) => {
-  console.log(req.files);
-  res.send("done");
-});
-
 //runs server
 app.listen(PORT, () => {
   console.log(`Server running port ${PORT}`);

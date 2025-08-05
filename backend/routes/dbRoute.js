@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
 
-import { fetchData, addData, updateData, deleteData } from "../modules/db.js";
+import { fetchFiles, addFile } from "../modules/db.js";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -22,7 +22,7 @@ const allowedTypes = [
 export const dbRoute = express.Router();
 
 dbRoute.get("/", async (req, res) => {
-  const result = await fetchData();
+  const result = await fetchFiles();
   if (result.items) {
     res.send(result.items);
   } else {
@@ -30,16 +30,25 @@ dbRoute.get("/", async (req, res) => {
   }
 });
 
-dbRoute.post("/post", upload.single("file"), async (req, res) => {
+dbRoute.post("/upload", upload.single("file"), async (req, res) => {
   if (req.file.size < 16000000) {
     if (allowedTypes.includes(req.file.mimetype)) {
-      const result = await addData(req.file);
+      const result = await addFile(req.file);
       res.json(result);
     } else {
       res.status(400).send("Invalid file type");
     }
   } else {
     res.status(400).send("File too big");
+  }
+});
+
+dbRoute.get("/download/:file", async (req, res) => {
+  try {
+    const file = req.params.file;
+    res.download(`./uploads/${file}`);
+  } catch (error) {
+    res.status(500).send("Error downloading file");
   }
 });
 

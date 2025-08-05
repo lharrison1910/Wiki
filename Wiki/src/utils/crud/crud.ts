@@ -72,7 +72,7 @@ import type { Dispatch, SetStateAction } from "react";
 import { client } from "../client/client";
 
 export const fetchFiles = async () => {
-  const response = await fetch(`${client}/files`);
+  const response = await fetch(`${client}/db`);
   return await response.json();
 };
 
@@ -85,7 +85,7 @@ export const addFile = async (
   const formData = new FormData();
   formData.append("file", newFile);
   try {
-    await fetch(`${client}/files/upload`, {
+    await fetch(`${client}/db/upload`, {
       method: "POST",
       body: formData,
     })
