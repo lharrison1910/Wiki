@@ -1,7 +1,4 @@
-//
 // import chunk from "./ChunkEmbed.js";
-
-//
 
 // const URL = process.env.MONGOSTRING;
 // if (!URL) {
@@ -71,7 +68,7 @@
 //     return error;
 //   }
 // }
-
+// lh3xpexJOWdBB8PN
 // export { addData, fetchData, updateData, deleteData };
 
 // // https://www.youtube.com/watch?v=JEBDfGqrAUA
@@ -79,11 +76,9 @@
 import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
 
-dotenv.config({ path: "../../.env" });
+dotenv.config({ path: "../.env" });
 
-//const URL = process.env.MONGOSTRING;
-const URL =
-  "mongodb+srv://lharrison06:2arayxxvqpBIVj2b@wiki.2fgyivp.mongodb.net/?authMechanism=SCRAM-SHA-1";
+const URL = process.env.MONGOSTRING;
 
 const client = new MongoClient(URL);
 const database = client.db("Wiki");
@@ -106,5 +101,22 @@ export const addFile = async (fileData) => {
   } catch (error) {
     console.error("Error adding file:", error);
     return { error: "Failed to add file" };
+  }
+};
+
+export const deleteFile = async (fileData) => {
+  console.log(fileData);
+  try {
+    const result = await fileDB.deleteOne(fileData);
+    console.log(result);
+    if (result.deletedCount === 1) {
+      return true;
+    } else {
+      console.log(result);
+      return false;
+    }
+  } catch (error) {
+    console.log(error);
+    return error;
   }
 };

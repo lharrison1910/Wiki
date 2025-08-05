@@ -1,9 +1,8 @@
 import express from "express";
 import cors from "cors";
-import fileUpload from "express-fileupload";
 
 import { dbRoute } from "./routes/dbRoute.js";
-import { fileRoute } from "./routes/fileRoute.js";
+//import { fileRoute } from "./routes/fileRoute.js";
 import { LLMRoute } from "./routes/LLMRoute.js";
 
 // server setup
@@ -16,10 +15,9 @@ app.get("/", (_req, res) => {
   res.send(1);
 });
 
-//CRUD operations
-app.use("/api/files", fileRoute);
+//app.use("/api/files", fileRoute);
 
-app.use("/api/db", dbRoute);
+app.use("/api/files", dbRoute);
 
 app.use("/api/LLM", LLMRoute);
 

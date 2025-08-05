@@ -12,6 +12,7 @@ function Homepage() {
   const [filter, setFilter] = useState<FileType[] | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [hasChanged, setHasChanged] = useState<boolean>(false);
 
   const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -30,18 +31,23 @@ function Homepage() {
       setFiles(await fetchFiles());
     };
     fetchData();
-  }, []);
+  }, [hasChanged]);
 
   const handleAdd = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
-      addFile(event.target.files[0], setErrorMsg, setSuccessMsg);
+      try {
+        addFile(event.target.files[0], setErrorMsg, setSuccessMsg);
+        setHasChanged(!hasChanged);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
   const handleFilter = (newValue: string | null) => {
     if (newValue !== null) {
       setFilter(
-        files.filter((file: { path: string }) => file.path === newValue)
+        files.filter((file: { filename: string }) => file.filename === newValue)
       );
     } else {
       setFilter(null);

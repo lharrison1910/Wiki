@@ -1,7 +1,8 @@
 import express from "express";
 import multer from "multer";
+import fs from "fs";
 
-import { fetchFiles, addFile } from "../modules/db.js";
+import { fetchFiles, addFile, deleteFile } from "../modules/db.js";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -24,6 +25,7 @@ export const dbRoute = express.Router();
 dbRoute.get("/", async (req, res) => {
   const result = await fetchFiles();
   if (result.items) {
+    console.log(result.items);
     res.send(result.items);
   } else {
     res.status(500).send("Error fetching data");
@@ -49,6 +51,23 @@ dbRoute.get("/download/:file", async (req, res) => {
     res.download(`./uploads/${file}`);
   } catch (error) {
     res.status(500).send("Error downloading file");
+  }
+});
+
+dbRoute.delete("/delete", express.json(), async (req, res) => {
+  console.log(req.body);
+  const { id, filename } = req.body;
+  try {
+    const result = await deleteFile(req.file);
+    if (result === true) {
+      fs.unlink(`../uploads/${filename}`, (error) => {
+        if (error) console.log(error);
+      });
+    } else {
+      throw new Error("Failed to delete file");
+    }
+  } catch (error) {
+    res.status(500).send(`Error deleting file: ${error}`);
   }
 });
 

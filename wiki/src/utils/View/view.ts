@@ -1,8 +1,8 @@
-import { client } from "../client/client";
+import { filesClient } from "../client/client";
 
 export const View = async (filename: string) => {
   try {
-    await fetch(`${client}/db/download/${filename}`).then((res) => {
+    await fetch(`${filesClient}/download/${filename}`).then((res) => {
       res.blob().then((blob) => {
         const fileURL = window.URL.createObjectURL(blob);
         const alink = document.createElement("a");
