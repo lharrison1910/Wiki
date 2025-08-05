@@ -8,54 +8,106 @@ import {
   TableRow,
   MenuItem,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
 import { useState } from "react";
-import { Delete, Download, FileOpen } from "@mui/icons-material";
+import { Delete, Download, FileOpen, MoreVert } from "@mui/icons-material";
 import { download } from "../../utils/download/download";
 import { deleteFile } from "../../utils/crud/crud";
+import type { FileType } from "../../types/FileType";
+import { View } from "../../utils/View/view";
 
-function TableView(props: { files: any }) {
-  let files = props.files;
-  const [openMenu, setOpenMenu] = useState<boolean>(false);
+function TableView(props: { files: FileType[] }) {
+  const files = props.files;
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [selected, setSelected] = useState<FileType>({
+    destination: "",
+    encoding: "",
+    fieldname: "",
+    filename: "",
+    mimetype: "",
+    originalname: "",
+    path: "",
+    size: 0,
+    _id: "",
+  });
+  const open = Boolean(anchorEl);
+
+  const handleSelect = (name: string) => {
+    const filtered = files.filter((file) => file._id === name);
+    setSelected(filtered[0]);
+  };
+
+  const headers = ["Name", "Size (Bytes)", "Actions"];
+
   return (
     <>
       <Table sx={{ width: 2 / 3, bgcolor: "white", margin: 4 }}>
         <TableHead>
           <TableRow>
-            <TableCell align="center">Name</TableCell>
-            <TableCell align="center">Size (Bytes)</TableCell>
-            <TableCell align="center">Last Modified</TableCell>
-            <TableCell align="center">Actions</TableCell>
+            {headers.map((header) => (
+              <TableCell align="center" key={header}>
+                {header}
+              </TableCell>
+            ))}
           </TableRow>
         </TableHead>
+
         <TableBody>
-          {files.map((file: any) => (
-            <TableRow key={file.id}>
-              <TableCell align="center">{file.path}</TableCell>
-              <TableCell align="center">{file.fileSize}</TableCell>
-              <TableCell align="center">{file.lastModified}</TableCell>
+          {files.map((file: FileType) => (
+            <TableRow key={file._id}>
+              <TableCell align="center">{file.filename}</TableCell>
+              <TableCell align="center">{file.size}</TableCell>
               <TableCell align="center">
-                <IconButton onClick={() => setOpenMenu(true)}>
-                  <MenuIcon />
-                  <Menu open={openMenu} onClose={() => setOpenMenu(false)}>
-                    <MenuItem>
-                      <FileOpen /> View
-                    </MenuItem>
-                    <MenuItem onClick={() => download(file.downloadUrl)}>
-                      <Download color="success" />
-                      Download
-                    </MenuItem>
-                    <MenuItem onClick={() => deleteFile(file.id)}>
-                      <Delete color="error" />
-                      Delete
-                    </MenuItem>
-                  </Menu>
+                <IconButton
+                  name={file._id}
+                  onClick={(event) => {
+                    setAnchorEl(event.currentTarget);
+                    handleSelect(event.currentTarget.name);
+                  }}
+                >
+                  <MoreVert />
                 </IconButton>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={() => setAnchorEl(null)}
+        slotProps={{
+          list: {
+            "aria-labelledby": "basic-button",
+          },
+        }}
+      >
+        <MenuItem
+          onClick={() => {
+            setAnchorEl(null);
+            View(selected.filename);
+          }}
+        >
+          <FileOpen color="primary" /> Open
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            setAnchorEl(null);
+            download(selected.filename);
+          }}
+        >
+          <Download color="success" />
+          Download
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            setAnchorEl(null);
+            deleteFile(selected);
+          }}
+        >
+          <Delete color="error" />
+          Delete
+        </MenuItem>
+      </Menu>
     </>
   );
 }

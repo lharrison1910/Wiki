@@ -1,4 +1,5 @@
 import express from "express";
+import fileUpload from "express-fileupload";
 
 export const fileRoute = express.Router();
 
@@ -10,17 +11,34 @@ fileRoute.get("/", async (req, res) => {
   res.json(response.items);
 });
 
-// fileRoute.post("/upload", upload.single("file"), async (req, res) => {
-//   try {
-//     console.log(req.file.buffer, "buffer");
-//     // const fileData = new File([req.file.buffer])
-//     //nexusUpload(fileData);
-//     res.status(200).send("File uploaded successfully");
-//   } catch (error) {
-//     console.error("Error uploading file:", error);
-//     return res.status(500).send("Error uploading file");
-//   }
-// });
+fileRoute.post("/upload", fileUpload(), async (req, res) => {
+  try {
+    console.log(req.files.file);
+    const formData = new FormData();
+    formData.append("file", req.files.file);
+
+    const headers = new Headers();
+    headers.append("Authorization", "Basic YWRtaW46YWRtaW4=");
+    await fetch(
+      `http://localhost:8081/repository/Files/${req.files.file.name}`,
+      {
+        method: "PUT",
+        headers: headers,
+        body: formData,
+      }
+    )
+      .then((res) => res.text())
+      .catch((error) => {
+        console.log(error);
+        throw new Error(`Error uploading file: ${error}`);
+      });
+    console.log("successful upload");
+    res.send("Successful upload");
+  } catch (error) {
+    console.log(error);
+    res.send(`Error uploading file: ${error}`);
+  }
+});
 
 fileRoute.delete("/delete", express.json(), async (req, res) => {
   const id = req.body.id;

@@ -1,76 +1,3 @@
-// import { useState } from "react";
-// import { Alert, Autocomplete, Button, styled, TextField } from "@mui/material";
-// import type { FileProps } from "../../types/FileType";
-// import ListView from "../../components/ListView/ListView";
-// import CardView from "../../components/CardView/CardView";
-// import { AttachFile } from "@mui/icons-material";
-// import { useData } from "../../context/dataContext";
-// import AI from "../../components/AIPopup/AI";
-// import EditModal from "../../components/EditPopup/EditModel";
-// import "./homepage.css";
-
-// function Homepage(props: { display: string | undefined }) {
-//   const {
-//     data,
-//     errorMsg,
-//     successMsg,
-//     setErrorMsg,
-//     setSuccessMsg,
-//     removeData,
-//     addData,
-//   } = useData();
-
-//   const display = props.display;
-
-//   // const [data, setData] = useState<FileProps[]>([]);
-//   const [filter, setFilter] = useState<FileProps[] | null>(null);
-//   const [open, isOpen] = useState(false);
-//   const [selected, setSelected] = useState<FileProps>({
-//     _id: "",
-//     filename: "",
-//     size: 0,
-//   });
-
-//   const handleDelete = (id: string) => {
-//     removeData(id);
-//     setFilter(null);
-//   };
-
-//   const handleClose = () => {
-//     isOpen(false);
-//   };
-
-//   return (
-//     <>
-//         {display === "list" ? (
-//           <ListView
-//             data={filter === null ? data : filter}
-//             handleDelete={handleDelete}
-//             setSelected={setSelected}
-//             isOpen={isOpen}
-//           />
-//         ) : (
-//           <CardView
-//             data={filter === null ? data : filter}
-//             handleDelete={handleDelete}
-//             setSelected={setSelected}
-//             isOpen={isOpen}
-//           />
-//         )}
-
-//         <EditModal open={open} handleClose={handleClose} file={selected} />
-//       </div>
-//       <div className="AI">
-//         <AI />
-//       </div>
-
-//
-//     </>
-//   );
-// }
-
-// export default Homepage;
-
 import { useEffect, useState } from "react";
 import { addFile, fetchFiles } from "../../utils/crud/crud";
 import type { FileType } from "../../types/FileType";
@@ -85,6 +12,7 @@ function Homepage() {
   const [filter, setFilter] = useState<FileType[] | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [hasChanged, setHasChanged] = useState<boolean>(false);
 
   const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -103,18 +31,23 @@ function Homepage() {
       setFiles(await fetchFiles());
     };
     fetchData();
-  }, []);
+  }, [hasChanged]);
 
-  const handleAdd = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAdd = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
-      addFile(event.target.files[0], setErrorMsg, setSuccessMsg);
+      try {
+        addFile(event.target.files[0], setErrorMsg, setSuccessMsg);
+        setHasChanged(!hasChanged);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
   const handleFilter = (newValue: string | null) => {
     if (newValue !== null) {
       setFilter(
-        files.filter((file: { path: string }) => file.path === newValue)
+        files.filter((file: { filename: string }) => file.filename === newValue)
       );
     } else {
       setFilter(null);
@@ -128,7 +61,7 @@ function Homepage() {
           sx={{ width: 1 / 2, bgcolor: "white", borderRadius: 6 }}
           disablePortal
           onChange={(_event, newValue) => handleFilter(newValue)}
-          options={files.map((file: FileType) => file.path)}
+          options={files.map((file: FileType) => file.filename)}
           renderInput={(params) => (
             <TextField {...params} label="Search" placeholder="Search" />
           )}

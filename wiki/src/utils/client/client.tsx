@@ -1,1 +1,3 @@
-export const client = "http://localhost:3000/api";
+const client = "http://localhost:3000/api";
+
+export const filesClient = `${client}/files`;
