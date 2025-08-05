@@ -6,7 +6,10 @@ Custom built document storage solution.
 
 ### Tech Stack
 
+### Frontend
 - React 19
-- Pocketbase 0.28
 
-No backend due to needing to be as light as possible
+### Backend
+- ExpressJS server
+- MongoDB
+
