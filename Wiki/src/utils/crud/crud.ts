@@ -1,6 +1,5 @@
 import type { Dispatch, SetStateAction } from "react";
 import { filesClient } from "../client/client";
-import type { FileType } from "../../types/FileType";
 
 export const fetchFiles = async () => {
   const response = await fetch(`${filesClient}`);
@@ -32,12 +31,10 @@ export const addFile = async (
   }
 };
 
-export const deleteFile = async (file) => {
-  const formData = new FormData();
-  formData.append("file", file);
+export const deleteFile = async (id: string, filename: string) => {
   return await fetch(`${filesClient}/delete`, {
     method: "Delete",
-    body: formData,
+    body: JSON.stringify({ id, filename }),
   })
     .then((res) => res.text())
     .catch((error) => {
