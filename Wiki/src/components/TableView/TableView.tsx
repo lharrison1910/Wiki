@@ -101,7 +101,7 @@ function TableView(props: { files: FileType[] }) {
         <MenuItem
           onClick={() => {
             setAnchorEl(null);
-            deleteFile(selected);
+            deleteFile(selected._id, selected.filename);
           }}
         >
           <Delete color="error" />

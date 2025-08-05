@@ -73,7 +73,7 @@
 
 // // https://www.youtube.com/watch?v=JEBDfGqrAUA
 
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import dotenv from "dotenv";
 
 dotenv.config({ path: "../.env" });
@@ -104,10 +104,10 @@ export const addFile = async (fileData) => {
   }
 };
 
-export const deleteFile = async (fileData) => {
-  console.log(fileData);
+export const deleteFile = async (id) => {
   try {
-    const result = await fileDB.deleteOne(fileData);
+    const query = { _id: new ObjectId(id) };
+    const result = await fileDB.deleteOne(query);
     console.log(result);
     if (result.deletedCount === 1) {
       return true;

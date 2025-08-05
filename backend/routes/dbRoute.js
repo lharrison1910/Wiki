@@ -38,6 +38,9 @@ dbRoute.post("/upload", upload.single("file"), async (req, res) => {
       const result = await addFile(req.file);
       res.json(result);
     } else {
+      fs.unlink(`./uploads/${req.file.filename}`, (error) =>
+        console.log(error)
+      );
       res.status(400).send("Invalid file type");
     }
   } else {
@@ -55,14 +58,15 @@ dbRoute.get("/download/:file", async (req, res) => {
 });
 
 dbRoute.delete("/delete", express.json(), async (req, res) => {
-  console.log(req.body);
+  console.log(req);
   const { id, filename } = req.body;
   try {
-    const result = await deleteFile(req.file);
+    const result = await deleteFile(id);
     if (result === true) {
-      fs.unlink(`../uploads/${filename}`, (error) => {
+      fs.unlink(`./uploads/${filename}`, (error) => {
         if (error) console.log(error);
       });
+      res.status(200).send("Successful deletion");
     } else {
       throw new Error("Failed to delete file");
     }
@@ -70,22 +74,3 @@ dbRoute.delete("/delete", express.json(), async (req, res) => {
     res.status(500).send(`Error deleting file: ${error}`);
   }
 });
-
-// dbRoute.post("/post", upload.single("file"), async (req, res) => {
-//   if (req.file.size < 16000000) {
-//     if (allowedTypes.includes(req.file.mimetype)) {
-//       const result = await addData(req.file);
-//       res.json(result);
-//     }
-//     res.send("invalid file type");
-//   }
-//   res.send("file too big");
-// });
-
-// dbRoute.post("/patch", upload.single("file"), async (req, res) => {
-//   res.json(updateData(req.body.id, req.file));
-// });
-
-// dbRoute.delete("/delete", express.json(), async (req, res) => {
-//   res.json(deleteData(req.body.id));
-// });
