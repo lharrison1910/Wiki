@@ -1,3 +1,4 @@
+version: "1.0.1"
 services:
   mongo:
     container_name: wiki-db
@@ -8,39 +9,56 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: example
     ports:
       - 27017:27017
+    networks:
+      - wiki-backend
     volumes:
       - mongo:/data/db
 
   ollama:
     container_name: wiki-llama3.2
     image: ollama/ollama:latest
-    ports:
-      - 11434:11434
     volumes:
       - ollama:/root/.ollama
     tty: true
     restart: unless-stopped
+    networks:
+      - wiki-backend
     command: "ollama pull llama3.2"
 
   backend:
     container_name: wiki-backend
     build: ./backend
-    ports:
-      - 3000:3000
     volumes:
       - files:/backend/uploads
+    networks:
+      - wiki-backend
 
-  nexus:
-    container_name: wiki-nexus
-    image: sonatype/nexus3
+  frontend:
+    container_name: wiki-frontend
+    build: ./Wiki
     ports:
-      - 8081:8081
-    volumes:
-      - nexus-data:/nexus-data
-    restart: unless-stopped
+      - 5174:5174
+    networks:
+      - wiki-backend
+      - wiki-frontend
+
+  # nexus:
+  #   container_name: wiki-nexus
+  #   image: sonatype/nexus3
+  #   ports:
+  #     - 8081:8081
+  #   volumes:
+  #     - nexus-data:/nexus-data
+  #   restart: unless-stopped
 
 volumes:
   mongo: {}
   ollama: {}
   files: {}
-  nexus-data: {}
+  # nexus-data: {}
+
+networks:
+  wiki-backend:
+    driver: bridge
+  wiki-frontend:
+    driver: bridge
