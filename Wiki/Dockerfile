@@ -1,15 +1,20 @@
-FROM node
+#Build
+FROM node:slim AS build
 
 WORKDIR /app
 
-COPY package.json .
+COPY package.json ./
 
-RUN npm install -g serve
+RUN npm install
 
 COPY . .
 
 RUN npm run build
 
-EXPOSE 3000
 
-CMD ["npm","run","preview"]
+#Production
+FROM nginx:alpine
+
+COPY --from=build /app/build /usr/share/nginx/html
+
+CMD ["nginx", "-g", "daemon off"]

@@ -9,6 +9,7 @@
     "express-fileupload": "^1.5.2",
     "express-form-data": "^3.0.1",
     "langchain": "^0.3.29",
+    "minio": "^8.0.5",
     "mongodb": "^6.17.0",
     "multer": "^2.0.1",
     "ollama": "^0.5.16",

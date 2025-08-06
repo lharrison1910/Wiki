@@ -1,4 +1,4 @@
-version: "1.0.1"
+version: "2.0.0"
 services:
   mongo:
     container_name: wiki-db
@@ -37,24 +37,29 @@ services:
     container_name: wiki-frontend
     build: ./Wiki
     ports:
-      - 5174:5174
+      - "8080:80"
     networks:
       - wiki-backend
       - wiki-frontend
-
-  # nexus:
-  #   container_name: wiki-nexus
-  #   image: sonatype/nexus3
+  # s3:
+  #   container_name: wiki-s3Bucket
+  #   image: minio/minio:latest
   #   ports:
-  #     - 8081:8081
+  #     - "9000:9000"
+  #     - "9099:9099"
+  #   environment:
+  #     MINIO_ROOT_USER: admin
+  #     MINIO_ROOT_PASSWORD: Password1
   #   volumes:
-  #     - nexus-data:/nexus-data
-  #   restart: unless-stopped
+  #     - s3Bucket:/data
+  #   command: server --address "0.0.0.0:9099" --console-address "0.0.0.0:9000" /data
+  #   restart: always
 
 volumes:
   mongo: {}
   ollama: {}
   files: {}
+  # s3Bucket: {}
   # nexus-data: {}
 
 networks:
@@ -62,3 +67,5 @@ networks:
     driver: bridge
   wiki-frontend:
     driver: bridge
+# services:
+
