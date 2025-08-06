@@ -37,8 +37,8 @@ export const deleteFile = async (id: string, filename: string) => {
     filename: "testing.docx",
   });
   console.log(body);
-  return await fetch(`${filesClient}/delete`, {
-    method: "Delete",
+  return await fetch(`http://localhost:3000/test`, {
+    method: "post",
     body: body,
   })
     .then((res) => res.text())
