@@ -1,37 +1,39 @@
 version: "2.0.0"
 services:
-  mongo:
-    container_name: wiki-db
-    image: mongo
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-    ports:
-      - 27017:27017
-    networks:
-      - wiki-backend
-    volumes:
-      - mongo:/data/db
+  # mongo:
+  #   container_name: wiki-db
+  #   image: mongo
+  #   restart: always
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: root
+  #     MONGO_INITDB_ROOT_PASSWORD: example
+  #   ports:
+  #     - 27017:27017
+  #   networks:
+  #     - wiki-backend
+  #   volumes:
+  #     - mongo:/data/db
 
-  ollama:
-    container_name: wiki-llama3.2
-    image: ollama/ollama:latest
-    volumes:
-      - ollama:/root/.ollama
-    tty: true
-    restart: unless-stopped
-    networks:
-      - wiki-backend
-    command: "ollama pull llama3.2"
+  # ollama:
+  #   container_name: wiki-llama3.2
+  #   image: ollama/ollama:latest
+  #   volumes:
+  #     - ollama:/root/.ollama
+  #   tty: true
+  #   restart: unless-stopped
+  #   networks:
+  #     - wiki-backend
+  #   command: "ollama pull llama3.2"
 
   backend:
     container_name: wiki-backend
     build: ./backend
     volumes:
       - files:/backend/uploads
+    ports:
+      - 3000:3000
     networks:
-      - wiki-backend
+      - wiki
 
   frontend:
     container_name: wiki-frontend
@@ -39,8 +41,7 @@ services:
     ports:
       - "8080:80"
     networks:
-      - wiki-backend
-      - wiki-frontend
+      - wiki
   # s3:
   #   container_name: wiki-s3Bucket
   #   image: minio/minio:latest
@@ -56,16 +57,14 @@ services:
   #   restart: always
 
 volumes:
-  mongo: {}
-  ollama: {}
+  # mongo: {}
+  # ollama: {}
   files: {}
   # s3Bucket: {}
   # nexus-data: {}
 
 networks:
-  wiki-backend:
-    driver: bridge
-  wiki-frontend:
+  wiki:
     driver: bridge
 # services:
 
