@@ -1,5 +1,6 @@
 import { MongoClient, ObjectId } from "mongodb";
 import dotenv from "dotenv";
+import chunk from "./ChunkEmbed.js";
 
 dotenv.config({ path: ".env" });
 
@@ -8,6 +9,7 @@ const URL = process.env.MONGOSTRING;
 const client = new MongoClient(URL);
 const database = client.db("Wiki");
 const fileDB = database.collection("FileData");
+const embedDB = database.collection("embeddingData");
 
 export const fetchFiles = async () => {
   try {
@@ -43,5 +45,14 @@ export const deleteFile = async (id) => {
   } catch (error) {
     console.log(error);
     return error;
+  }
+};
+
+export const addEmbeddings = async (chunks) => {
+  try {
+    const result = await embedDB.insertMany(chunks, { ordered: true });
+    return result;
+  } catch (error) {
+    console.log(error);
   }
 };

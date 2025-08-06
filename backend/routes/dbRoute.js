@@ -3,6 +3,7 @@ import multer from "multer";
 import fs from "fs";
 
 import { fetchFiles, addFile, deleteFile } from "../modules/db.js";
+import chunk from "../modules/ChunkEmbed.js";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -36,6 +37,11 @@ dbRoute.post("/upload", upload.single("file"), async (req, res) => {
   if (req.file.size < 16000000) {
     if (allowedTypes.includes(req.file.mimetype)) {
       const result = await addFile(req.file);
+      if (result.insertedId) {
+        chunk(`./uploads/${req.file.filename}`).catch((error) => {
+          throw new Error(`Failed to chunk or embed: ${error}`);
+        });
+      }
       res.json(result);
     } else {
       fs.unlink(`./uploads/${req.file.filename}`, (error) =>

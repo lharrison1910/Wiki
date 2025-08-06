@@ -16,7 +16,6 @@ export async function chat(message) {
 }
 
 export async function embed(chunk) {
-  console.log("recieved chunk");
   const response = await ollama.embed({
     model: "llama3.2",
     input: chunk,
