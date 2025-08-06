@@ -28,7 +28,10 @@ function Homepage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      setFiles(await fetchFiles());
+      const response = await fetchFiles();
+      if (typeof response != "string") {
+        setFiles(response);
+      }
     };
     fetchData();
   }, [hasChanged]);
@@ -67,7 +70,10 @@ function Homepage() {
           )}
         />
 
-        <TableView files={filter != null ? filter : files} />
+        <TableView
+          files={filter != null ? filter : files}
+          setHasChanged={setHasChanged}
+        />
 
         <Button
           component="label"

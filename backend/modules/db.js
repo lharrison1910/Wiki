@@ -1,79 +1,4 @@
-// import chunk from "./ChunkEmbed.js";
-
-// const URL = process.env.MONGOSTRING;
-// if (!URL) {
-//   throw new Error("MONGOSTRING environment variable is not set");
-// }
-// const client = new MongoClient(URL);
-// const database = client.db("Wiki");
-
-// const embeddingDB = database.collection("embeddingData");
-// //fileDB stuff
-
-// //Create
-// async function addData(fileData) {
-//   try {
-//     const headers = new Headers();
-//     headers.append("Authorization", `Basic YWRtaW46YWRtaW4=`);
-//     const formData = new FormData();
-//     formData.append("file", fileData);
-
-//     const result = await fetch(
-//       `http://localhost:8081/repisitory/Files/${fileData.originalname}`,
-//       {
-//         method: "POST",
-//         headers: headers,
-//         body: formData,
-//       }
-//     );
-//     console.log(result);
-//     return result;
-//   } catch (error) {
-//     console.error("Error uploading file:", error);
-//     return { error: "Failed to upload file" };
-//   }
-// }
-
-// //Read
-// async function fetchData() {
-//   try {
-//     const result = await fetch(
-//       `http://localhost:8081/service/rest/v1/assets?repository=Files`
-//     );
-//     return await result.json();
-//   } catch (error) {
-//     return error;
-//   }
-// }
-
-// //Update
-// async function updateData() {
-//   // try {
-//   //   const result = await fileDB.replaceOne(id, fileData);
-//   //   console.log(result);
-//   //   return result;
-//   // } catch (error) {
-//   //   return error;
-//   // }
-// }
-
-// //Delete
-// async function deleteData(id) {
-//   try {
-//     const result = await fetch(
-//       `http://localhost:8081/service/rest/v1/assets/${id}`
-//     );
-//     return await result.json();
-//   } catch (error) {
-//     return error;
-//   }
-// }
-// lh3xpexJOWdBB8PN
-// export { addData, fetchData, updateData, deleteData };
-
-// // https://www.youtube.com/watch?v=JEBDfGqrAUA
-
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import dotenv from "dotenv";
 
 dotenv.config({ path: "../.env" });
@@ -104,10 +29,10 @@ export const addFile = async (fileData) => {
   }
 };
 
-export const deleteFile = async (fileData) => {
-  console.log(fileData);
+export const deleteFile = async (id) => {
   try {
-    const result = await fileDB.deleteOne(fileData);
+    const query = { _id: new ObjectId(id) };
+    const result = await fileDB.deleteOne(query);
     console.log(result);
     if (result.deletedCount === 1) {
       return true;

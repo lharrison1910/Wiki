@@ -21,6 +21,10 @@ app.use("/api/files", dbRoute);
 
 app.use("/api/LLM", LLMRoute);
 
+app.post("/test", express.json(), (req, res) => {
+  console.log(req.body);
+});
+
 //runs server
 app.listen(PORT, () => {
   console.log(`Server running port ${PORT}`);

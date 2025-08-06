@@ -1,19 +1,14 @@
+<!-- # Wiki <img src="./wiki/public/logo.svg"> -->
+
 # Wiki
 
 Custom built document storage solution.
 
 ### Tech Stack
 
-#### Front end
-
+### Frontend
 - React 19
 
-#### Backend
-
-- Flask server
-
-#### Database
-
-- Mongo DB with vector Search
-
-backend and databse has been containerised for ease of deployment.
+### Backend
+- ExpressJS server
+- MongoDB
