@@ -58,7 +58,6 @@ dbRoute.get("/download/:file", async (req, res) => {
 });
 
 dbRoute.delete("/delete", express.json(), async (req, res) => {
-  console.log(req);
   const { id, filename } = req.body;
   try {
     const result = await deleteFile(id);

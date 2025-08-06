@@ -33,12 +33,14 @@ export const addFile = async (
 
 export const deleteFile = async (id: string, filename: string) => {
   const body = JSON.stringify({
-    id: "6891ea5c4d9824e01956d045",
-    filename: "testing.docx",
+    id,
+    filename,
   });
-  console.log(body);
-  return await fetch(`http://localhost:3000/test`, {
-    method: "post",
+  return await fetch(`${filesClient}/delete`, {
+    method: "delete",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: body,
   })
     .then((res) => res.text())

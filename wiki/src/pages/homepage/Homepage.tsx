@@ -70,7 +70,10 @@ function Homepage() {
           )}
         />
 
-        <TableView files={filter != null ? filter : files} />
+        <TableView
+          files={filter != null ? filter : files}
+          setHasChanged={setHasChanged}
+        />
 
         <Button
           component="label"

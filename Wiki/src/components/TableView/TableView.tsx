@@ -15,8 +15,12 @@ import { deleteFile } from "../../utils/crud/crud";
 import type { FileType } from "../../types/FileType";
 import { View } from "../../utils/View/view";
 
-function TableView(props: { files: FileType[] }) {
+function TableView(props: {
+  files: FileType[];
+  setHasChanged: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const files = props.files;
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selected, setSelected] = useState<FileType>({
     destination: "",
@@ -102,6 +106,7 @@ function TableView(props: { files: FileType[] }) {
           onClick={() => {
             setAnchorEl(null);
             deleteFile(selected._id, selected.filename);
+            props.setHasChanged(false);
           }}
         >
           <Delete color="error" />
