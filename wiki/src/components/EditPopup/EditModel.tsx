@@ -1,7 +1,9 @@
 import { AttachFile } from "@mui/icons-material";
-import { Box, Button, Divider, Modal, styled, Typography } from "@mui/material";
+import { Box, Button, Modal, styled, Typography } from "@mui/material";
 import type { FileProps } from "../../types/FileType";
 import { useData } from "../../context/dataContext";
+import type { ChangeEvent } from "react";
+import "./EditModal.css";
 
 interface ModalProps {
   open: boolean;
@@ -23,45 +25,55 @@ function EditModal({ open, handleClose, file }: ModalProps) {
     whiteSpace: "nowrap",
     width: 1,
   });
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 550,
+    height: 400,
+    bgcolor: "background.paper",
+    border: "2px solid #000",
+    boxShadow: 24,
+    p: 4,
+    color: "black",
+  };
 
-  function handleFileChange(
-    event: { target: { files: File[] } } | React.ChangeEvent<HTMLInputElement>
-  ) {
-    if (event.target.files != null) {
-      const form = {
-        id: file.id,
-        FileName: event.target.files[0].name,
-        Size: event.target.files[0].size,
-        lastModified: event.target.files[0].lastModified.toString(),
-        file: event.target.files[0],
-      };
-      updateData(form);
+  const handleFileChange = (
+    event: ChangeEvent<HTMLInputElement> | { target: { files: File[] } },
+    id: string
+  ) => {
+    if (event.target.files !== null) {
+      updateData(event.target.files[0], id);
     }
-  }
+  };
 
   return (
-    <div className="flex flex-col justify-center items-center align-middle">
+    <div className="EditModal">
       <Modal open={open} onClose={handleClose}>
-        <Box sx={{ bgcolor: "white", color: "black", width: 500, height: 500 }}>
-          <Typography sx={{ color: "black" }}>{file.FileName}</Typography>
-          <Typography sx={{ color: "black" }}>{file.Size} kb</Typography>
-          <Typography sx={{ color: "black" }}>{file.lastModified}</Typography>
-          <Divider />
-          This will be a drag drop area for the replacement file
-          <Button
-            component="label"
-            role={undefined}
-            variant="contained"
-            tabIndex={-1}
-            endIcon={<AttachFile />}
-          >
-            upload new file
-            <VisuallyHiddenInput
-              type="file"
-              onChange={(event) => handleFileChange(event)}
-            />
-          </Button>
-          <Divider />
+        <Box sx={style}>
+          <div className="modal-header">
+            <Typography>File Name: {file.filename}</Typography>
+            <Typography>Size: {file.size} kb</Typography>
+          </div>
+
+          <div className="modal-file">
+            <Typography>This will be a drag and drop eventually</Typography>
+            <Button
+              component="label"
+              role={undefined}
+              variant="contained"
+              tabIndex={-1}
+              endIcon={<AttachFile />}
+            >
+              upload new file
+              <VisuallyHiddenInput
+                type="file"
+                onChange={(event) => handleFileChange(event, file._id)}
+              />
+            </Button>
+            Supported file types: PDF, Docx. File must be under 1MB
+          </div>
         </Box>
       </Modal>
     </div>

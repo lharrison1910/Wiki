@@ -12,4 +12,3 @@ Custom built document storage solution.
 ### Backend
 - ExpressJS server
 - MongoDB
-

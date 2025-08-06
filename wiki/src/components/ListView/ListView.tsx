@@ -1,6 +1,8 @@
-import { Delete, Download, Edit } from "@mui/icons-material";
+import { MoreVert } from "@mui/icons-material";
 import {
   IconButton,
+  Menu,
+  MenuItem,
   Paper,
   Table,
   TableBody,
@@ -9,51 +11,56 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { useState } from "react";
-import EditModal from "../EditPopup/EditModel";
-import type { FileProps } from "../../types/FileType";
+import { client } from "../../utils/client/client";
+import type { ViewProps } from "../../types/ViewProps";
 
-interface ListViewProps {
-  data: FileProps[];
-  handleDelete: (id: string) => void;
-}
+import "./ListView.css";
+import { useState, type MouseEvent } from "react";
+import { useData } from "../../context/dataContext";
 
-function ListView({ data, handleDelete }: ListViewProps) {
-  const [open, isOpen] = useState(false);
-  const [selected, setSelected] = useState<FileProps>({
-    id: "",
-    FileName: "",
-    Size: 0,
-    lastModified: "",
-    file: "",
-  });
-
+function ListView({ data, handleDelete, setSelected, isOpen }: ViewProps) {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
   const TableHeader = [
     { header: "Name" },
     { header: "Size (kb)" },
-    { header: "Last Modified" },
-    { header: "Edit" },
-    { header: "Download" },
-    { header: "Delete" },
+    { header: "Actions" },
   ];
+  const { setErrorMsg } = useData();
 
+  const handleClick = (
+    event: MouseEvent<HTMLButtonElement, MouseEvent> | any
+  ) => {
+    setAnchorEl(event.currentTarget);
+  };
   const handleClose = () => {
-    isOpen(false);
+    setAnchorEl(null);
   };
 
-  function handleSelected(index: number) {
+  const handleSelected = (index: number) => {
     setSelected(data[index]);
     isOpen(true);
-  }
+  };
 
-  function handleDownload(index: number) {
-    console.log("this will download file", data[index]);
-    //fetch(`web address/api/files/Wiki/${data[index].id}/${data[index].file}?download=1`)
-  }
+  const handleDownload = async (filename: string) => {
+    try {
+      await fetch(`${client}/download/${filename}`).then((res) => {
+        res.blob().then((blob) => {
+          const fileURL = window.URL.createObjectURL(blob);
+          let alink = document.createElement("a");
+          alink.href = fileURL;
+          alink.download = filename;
+          alink.click();
+        });
+      });
+    } catch (error: any) {
+      setErrorMsg(error.message);
+    }
+  };
 
   return (
     <>
-      <div className="w-2/3 max-w-2/3 min-w-1/2 m-2  flex justify-center items-center">
+      <div className="ListView">
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
@@ -67,36 +74,33 @@ function ListView({ data, handleDelete }: ListViewProps) {
             </TableHead>
             <TableBody>
               {data.map((fd, index) => (
-                <TableRow key={index}>
-                  <TableCell align="center">{fd.FileName}</TableCell>
-                  <TableCell align="center">{fd.Size}</TableCell>
-                  <TableCell align="center">{fd.lastModified}</TableCell>
-                  <TableCell align="center">
-                    <IconButton onClick={() => handleSelected(index)}>
-                      <Edit />
-                    </IconButton>
-                  </TableCell>
-                  <TableCell align="center">
-                    <IconButton onClick={() => handleDownload(index)}>
-                      <Download />
-                    </IconButton>
-                  </TableCell>
-                  <TableCell align="center">
-                    <IconButton onClick={() => handleDelete(fd.id)}>
-                      <Delete color="error" />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
+                <>
+                  <TableRow key={fd._id}>
+                    <TableCell align="center">{fd.filename}</TableCell>
+                    <TableCell align="center">{fd.size}</TableCell>
+                    <TableCell align="center">
+                      <IconButton onClick={(event) => handleClick(event)}>
+                        <MoreVert />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                  <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+                    <MenuItem onClick={() => handleSelected(index)}>
+                      Open
+                    </MenuItem>
+                    <MenuItem onClick={() => handleDownload(fd.filename)}>
+                      Download
+                    </MenuItem>
+                    <MenuItem onClick={() => handleDelete(fd._id)}>
+                      Delete
+                    </MenuItem>
+                  </Menu>
+                </>
               ))}
             </TableBody>
-            {/* <TableFooter>
-                            How does this look
-                        </TableFooter> */}
           </Table>
         </TableContainer>
       </div>
-
-      <EditModal open={open} handleClose={handleClose} file={selected} />
     </>
   );
 }

@@ -1,107 +1,125 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
-import PocketBase from "pocketbase";
-import type { FileProps } from "../types/FileType";
+// import { createContext, useContext, useState, type ReactNode } from "react";
+// import { client } from "../utils/client/client";
+// import type { FileProps } from "../types/FileType";
 
-const pb = new PocketBase("http://127.0.0.1:8089");
+// interface DataContextType {
+//   data: FileProps[];
+//   errorMsg: string | null;
+//   successMsg: string | null;
+//   setData: (things: FileProps[]) => void;
+//   setErrorMsg: (msg: string | null) => void;
+//   setSuccessMsg: (msg: string | null) => void;
+//   fetchData: () => void;
+//   addData: (newData: File) => void;
+//   removeData: (id: string) => void;
+//   updateData: (newData: File, id: string) => void;
+// }
 
-interface DataContextType {
-  data: FileProps[];
-  errorMsg: string | null;
-  successMsg: string | null;
-  setData: (things: FileProps[]) => void;
-  setErrorMsg: (msg: string | null) => void;
-  setSuccessMsg: (msg: string | null) => void;
-  addData: (newData: FileProps) => void;
-  removeData: (id: string) => void;
-  updateData: (newData: FileProps) => void;
-}
+// const DataContext = createContext<DataContextType | undefined>(undefined);
 
-const DataContext = createContext<DataContextType | undefined>(undefined);
+// export function useData() {
+//   const context = useContext(DataContext);
+//   if (context === undefined) {
+//     throw new Error("useData has to be wrapped by DataProvider");
+//   }
+//   return context;
+// }
 
-export function useData() {
-  const context = useContext(DataContext);
-  if (context === undefined) {
-    throw new Error("useData has to be wrapped by DataProvider");
-  }
-  return context;
-}
+// interface DataProviderProps {
+//   children: ReactNode;
+// }
+// export function DataProvider({ children }: DataProviderProps) {
+//   const [data, setData] = useState<FileProps[]>([]);
+//   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+//   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-interface DataProviderProps {
-  children: ReactNode;
-}
-export function DataProvider({ children }: DataProviderProps) {
-  const [data, setData] = useState<FileProps[]>([]);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+//   const fetchData = async () => {
+//     try {
+//       const response = await fetch(`${client}/db`);
+//       if (!response.ok) {
+//         console.log(response.statusText);
+//       }
+//       const json = await response.json();
+//       setData(json);
+//     } catch (error) {
+//       setErrorMsg(`Something went wrong: ${error}`);
+//     }
+//   };
 
-  async function addData(newData: FileProps) {
-    try {
-      const temp = data;
-      const toSend = {
-        FileName: newData.FileName,
-        Size: newData.Size,
-        lastModified: newData.lastModified,
-        file: newData.file,
-      };
-      temp?.push(newData);
-      setData(temp);
-      await pb.collection("Wiki").create(toSend);
-      setSuccessMsg("File added");
-    } catch (error) {
-      setErrorMsg(`Something went wronng: ${error}`);
-    }
-  }
+//   const addData = async (newFile: File) => {
+//     console.log(newFile);
+//     const formData = new FormData();
+//     formData.append("file", newFile);
+//     try {
+//       const response = await fetch(`${client}/db/post`, {
+//         method: "post",
+//         body: formData,
+//       });
 
-  async function removeData(id: string) {
-    try {
-      if (data !== null) {
-        await pb.collection("Wiki").delete(id);
-        setData(data.filter((d) => d.id != id));
-        setSuccessMsg(`File has been removed.`);
-      }
-    } catch (error) {
-      setErrorMsg(`Something went wrong: ${error}`);
-    }
-  }
+//       if (!response.ok) {
+//         console.log("problems");
+//       }
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   };
 
-  async function updateData(newData: FileProps) {
-    try {
-      await pb.collection("Wiki").update(newData.id, newData);
-      setData(
-        data.map((d) => {
-          if (d.id === newData.id) {
-            return {
-              ...d,
-              FileName: newData.FileName,
-              Size: newData.Size,
-              lastModified: newData.lastModified,
-              file: newData.file,
-            };
-          } else {
-            return d;
-          }
-        })
-      );
-    } catch (error) {
-      setErrorMsg(`Something went wrong: ${error}`);
-    }
-  }
+//   const removeData = async (id: string) => {
+//     console.log(id);
+//     try {
+//       const response = await fetch(`${client}/db/delete`, {
+//         method: "delete",
+//         body: JSON.stringify({ id }),
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//       });
 
-  return (
-    <DataContext.Provider
-      value={{
-        data,
-        errorMsg,
-        successMsg,
-        setData,
-        setErrorMsg,
-        setSuccessMsg,
-        addData,
-        removeData,
-        updateData,
-      }}
-    >
-      {children}
-    </DataContext.Provider>
-  );
-}
+//       if (!response.ok) {
+//         setErrorMsg(`Something went wrong: ${response.statusText}`);
+//         return;
+//       }
+//       setData(data.filter((d) => d._id !== id));
+//       setSuccessMsg(`File was removed`);
+//     } catch (error) {
+//       setErrorMsg(`Something went wrong: ${error}`);
+//     }
+//   };
+
+//   const updateData = async (newFile: File, id: string) => {
+//     const formData = new FormData();
+//     formData.append("file", newFile);
+//     formData.append("id", id);
+//     try {
+//       const response = await fetch(`${client}/db/patch?id=${id}`, {
+//         method: "post",
+//         body: formData,
+//       });
+
+//       if (!response.ok) {
+//         setErrorMsg(response.statusText);
+//       }
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   };
+
+//   return (
+//     <DataContext.Provider
+//       value={{
+//         data,
+//         errorMsg,
+//         successMsg,
+//         setData,
+//         setErrorMsg,
+//         setSuccessMsg,
+//         fetchData,
+//         addData,
+//         removeData,
+//         updateData,
+//       }}
+//     >
+//       {children}
+//     </DataContext.Provider>
+//   );
+// }

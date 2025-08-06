@@ -1,23 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { addFile, fetchFiles } from "../../utils/crud/crud";
+import type { FileType } from "../../types/FileType";
 import { Alert, Autocomplete, Button, styled, TextField } from "@mui/material";
-import type { FileProps } from "../../types/FileType";
-import ListView from "../../components/ListView/ListView";
-import CardView from "../../components/CardView/CardView";
 import { AttachFile } from "@mui/icons-material";
-import { useData } from "../../context/dataContext";
+import TableView from "../../components/TableView/TableView";
 
-function Homepage(props: { display: string | undefined }) {
-  const {
-    data,
-    errorMsg,
-    successMsg,
-    setErrorMsg,
-    setSuccessMsg,
-    removeData,
-    addData,
-  } = useData();
+import "./homepage.css";
 
-  const display = props.display;
+function Homepage() {
+  const [files, setFiles] = useState<FileType[]>([]);
+  const [filter, setFilter] = useState<FileType[] | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [hasChanged, setHasChanged] = useState<boolean>(false);
+
   const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
     clipPath: "inset(50%)",
@@ -30,59 +26,54 @@ function Homepage(props: { display: string | undefined }) {
     width: 1,
   });
 
-  // const [data, setData] = useState<FileProps[]>([]);
-  const [filter, setFilter] = useState<FileProps[] | null>(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetchFiles();
+      if (typeof response != "string") {
+        setFiles(response);
+      }
+    };
+    fetchData();
+  }, [hasChanged]);
 
-  //this relies on unique names, not a fan. need to find a way to use ID instead
-  function handleFilter(newValue: string | null) {
+  const handleAdd = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      try {
+        addFile(event.target.files[0], setErrorMsg, setSuccessMsg);
+        setHasChanged(!hasChanged);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  const handleFilter = (newValue: string | null) => {
     if (newValue !== null) {
       setFilter(
-        data.filter((d: { FileName: string }) => d.FileName === newValue)
+        files.filter((file: { filename: string }) => file.filename === newValue)
       );
     } else {
       setFilter(null);
     }
-  }
-
-  function handleDelete(id: string) {
-    removeData(id);
-    setFilter(null);
-  }
-
-  function handleAdd(event: any) {
-    const newFile: FileProps = {
-      id: "",
-      FileName: event.target.files[0].name,
-      Size: event.target.files[0].size,
-      lastModified: event.target.files[0].lastModifiedDate.toString(),
-      file: event.target.files[0],
-    };
-    addData(newFile);
-  }
+  };
 
   return (
     <>
-      <div className="flex flex-col justify-center items-center w-full mt-4">
+      <div className="homepage">
         <Autocomplete
           sx={{ width: 1 / 2, bgcolor: "white", borderRadius: 6 }}
           disablePortal
           onChange={(_event, newValue) => handleFilter(newValue)}
-          options={data.map((d: { FileName: string }) => d.FileName)}
+          options={files.map((file: FileType) => file.filename)}
           renderInput={(params) => (
             <TextField {...params} label="Search" placeholder="Search" />
           )}
         />
-        {display === "list" ? (
-          <ListView
-            data={filter === null ? data : filter}
-            handleDelete={handleDelete}
-          />
-        ) : (
-          <CardView
-            data={filter === null ? data : filter}
-            handleDelete={handleDelete}
-          />
-        )}
+
+        <TableView
+          files={filter != null ? filter : files}
+          setHasChanged={setHasChanged}
+        />
 
         <Button
           component="label"
@@ -90,27 +81,27 @@ function Homepage(props: { display: string | undefined }) {
           variant="contained"
           tabIndex={-1}
           endIcon={<AttachFile />}
+          sx={{ margin: 2, width: 1 / 2, borderRadius: 6, bgcolor: "green" }}
         >
-          upload file
+          New File
           <VisuallyHiddenInput
             type="file"
             onChange={(event) => handleAdd(event)}
           />
         </Button>
-      </div>
-
-      {/*feedback */}
-      <div>
-        {errorMsg != null ? (
-          <Alert severity="error" onClose={() => setErrorMsg(null)}>
-            {errorMsg}
-          </Alert>
-        ) : null}
-        {successMsg != null ? (
-          <Alert severity="success" onClose={() => setSuccessMsg(null)}>
-            {successMsg}
-          </Alert>
-        ) : null}
+        {/*Feedback*/}
+        <div>
+          {errorMsg != null ? (
+            <Alert severity="error" onClose={() => setErrorMsg(null)}>
+              {errorMsg}
+            </Alert>
+          ) : null}
+          {successMsg != null ? (
+            <Alert severity="success" onClose={() => setSuccessMsg(null)}>
+              {successMsg}
+            </Alert>
+          ) : null}
+        </div>
       </div>
     </>
   );

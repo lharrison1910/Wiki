@@ -1,23 +1,24 @@
-import { ListSharp, ViewDay } from "@mui/icons-material";
+// import { ListSharp, ViewDay } from "@mui/icons-material";
 import {
   Box,
   AppBar,
   Typography,
   Toolbar,
-  IconButton,
+  // IconButton,
   Button,
 } from "@mui/material";
 import { useNavigate } from "react-router";
 
-interface Props {
-  updateDisplay: (display: string) => void;
-}
-function Navbar({ updateDisplay }: Props) {
+// interface Props {
+//   updateDisplay: (display: string) => void;
+// }
+
+function Navbar() {
   const navigate = useNavigate();
 
-  function handleClick(display: string) {
-    updateDisplay(display);
-  }
+  // const handleClick = (display: string) => {
+  //   updateDisplay(display);
+  // };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -28,16 +29,16 @@ function Navbar({ updateDisplay }: Props) {
               onClick={() => navigate("/")}
               sx={{ color: "white", fontSize: 20 }}
             >
-              Duncan's Wiki
+              SAPfolio
             </Button>
             {/* <img src="../../../public/logo.svg" /> */}
           </Typography>
-          <IconButton name="list" onClick={() => handleClick("list")}>
+          {/* <IconButton name="list" onClick={() => handleClick("list")}>
             <ListSharp sx={{ color: "white" }} />
           </IconButton>
           <IconButton name="card" onClick={() => handleClick("card")}>
             <ViewDay sx={{ color: "white" }} />
-          </IconButton>
+          </IconButton> */}
         </Toolbar>
       </AppBar>
     </Box>
