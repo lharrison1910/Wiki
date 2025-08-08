@@ -1,11 +1,10 @@
 export type FileType = {
-  _id: string;
-  fieldname: string;
-  originalname: string;
-  encoding: string;
-  mimetype: string;
-  destination: string;
-  filename: string;
+  downloadUrl: string;
   path: string;
-  size: number;
+  id: string;
+  repository: string;
+  contentType: string;
+  lastModified: string;
+  lastDownloaded: null | string;
+  fileSize: number;
 };

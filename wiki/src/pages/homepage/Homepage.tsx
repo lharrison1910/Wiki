@@ -50,7 +50,7 @@ function Homepage() {
   const handleFilter = (newValue: string | null) => {
     if (newValue !== null) {
       setFilter(
-        files.filter((file: { filename: string }) => file.filename === newValue)
+        files.filter((file: { path: string }) => file.path === newValue)
       );
     } else {
       setFilter(null);
@@ -64,7 +64,7 @@ function Homepage() {
           sx={{ width: 1 / 2, bgcolor: "white", borderRadius: 6 }}
           disablePortal
           onChange={(_event, newValue) => handleFilter(newValue)}
-          options={files.map((file: FileType) => file.filename)}
+          options={files.map((file: FileType) => file.path)}
           renderInput={(params) => (
             <TextField {...params} label="Search" placeholder="Search" />
           )}

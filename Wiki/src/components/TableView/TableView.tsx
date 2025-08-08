@@ -23,20 +23,19 @@ function TableView(props: {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selected, setSelected] = useState<FileType>({
-    destination: "",
-    encoding: "",
-    fieldname: "",
-    filename: "",
-    mimetype: "",
-    originalname: "",
+    downloadUrl: "",
     path: "",
-    size: 0,
-    _id: "",
+    id: "",
+    repository: "",
+    contentType: "",
+    lastModified: "",
+    lastDownloaded: null,
+    fileSize: 0,
   });
   const open = Boolean(anchorEl);
 
-  const handleSelect = (name: string) => {
-    const filtered = files.filter((file) => file._id === name);
+  const handleSelect = (id: string) => {
+    const filtered = files.filter((file) => file.id === id);
     setSelected(filtered[0]);
   };
 
@@ -57,12 +56,12 @@ function TableView(props: {
 
         <TableBody>
           {files.map((file: FileType) => (
-            <TableRow key={file._id}>
-              <TableCell align="center">{file.filename}</TableCell>
-              <TableCell align="center">{file.size}</TableCell>
+            <TableRow key={file.id}>
+              <TableCell align="center">{file.path}</TableCell>
+              <TableCell align="center">{file.fileSize}</TableCell>
               <TableCell align="center">
                 <IconButton
-                  name={file._id}
+                  name={file.id}
                   onClick={(event) => {
                     setAnchorEl(event.currentTarget);
                     handleSelect(event.currentTarget.name);
@@ -88,7 +87,7 @@ function TableView(props: {
         <MenuItem
           onClick={() => {
             setAnchorEl(null);
-            View(selected.filename);
+            View(selected.path);
           }}
         >
           <FileOpen color="primary" /> Open
@@ -96,7 +95,7 @@ function TableView(props: {
         <MenuItem
           onClick={() => {
             setAnchorEl(null);
-            download(selected.filename);
+            download(selected.path);
           }}
         >
           <Download color="success" />
@@ -105,7 +104,7 @@ function TableView(props: {
         <MenuItem
           onClick={() => {
             setAnchorEl(null);
-            deleteFile(selected._id, selected.filename);
+            deleteFile(selected.id);
             props.setHasChanged(false);
           }}
         >

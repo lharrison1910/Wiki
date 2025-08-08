@@ -42,29 +42,24 @@ services:
       - "8080:80"
     networks:
       - wiki
-  # s3:
-  #   container_name: wiki-s3Bucket
-  #   image: minio/minio:latest
-  #   ports:
-  #     - "9000:9000"
-  #     - "9099:9099"
-  #   environment:
-  #     MINIO_ROOT_USER: admin
-  #     MINIO_ROOT_PASSWORD: Password1
-  #   volumes:
-  #     - s3Bucket:/data
-  #   command: server --address "0.0.0.0:9099" --console-address "0.0.0.0:9000" /data
-  #   restart: always
+
+  Sonatype:
+    container_name: wiki-nexus
+    image: sonatype/nexus3:latest
+    ports:
+      - 8081:8081
+    networks:
+      - wiki
+    volumes:
+      - nexus-data:/nexus-data
+    restart: unless-stopped
 
 volumes:
   # mongo: {}
   # ollama: {}
   files: {}
-  # s3Bucket: {}
-  # nexus-data: {}
+  nexus-data: {}
 
 networks:
   wiki:
     driver: bridge
-# services:
-

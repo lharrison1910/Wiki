@@ -31,10 +31,9 @@ export const addFile = async (
   }
 };
 
-export const deleteFile = async (id: string, filename: string) => {
+export const deleteFile = async (id: string) => {
   const body = JSON.stringify({
     id,
-    filename,
   });
   return await fetch(`${filesClient}/delete`, {
     method: "delete",
