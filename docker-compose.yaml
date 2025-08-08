@@ -28,8 +28,6 @@ services:
   backend:
     container_name: wiki-backend
     build: ./backend
-    volumes:
-      - files:/backend/uploads
     ports:
       - 3000:3000
     networks:
@@ -57,7 +55,6 @@ services:
 volumes:
   # mongo: {}
   # ollama: {}
-  files: {}
   nexus-data: {}
 
 networks:

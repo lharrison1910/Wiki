@@ -2,14 +2,23 @@ import express from "express";
 import fileUpload from "express-fileupload";
 import { uploadFile } from "../modules/Nexus.js";
 import { pipeline } from "stream/promises";
+import { chunk } from "../modules/ChunkEmbed.js";
 
 export const fileRoute = express.Router();
 
 fileRoute.get("/", async (req, res) => {
+  console.log("fetching files");
   const response = await fetch(
-    "http://localhost:8081/service/rest/v1/assets?repository=Files"
-  ).then((res) => res.json());
-
+    "http://Sonatype:8081/service/rest/v1/assets?repository=Files",
+    {
+      headers: {
+        Authorization: `Basic ${Buffer.from(`admin:admin`).toString("base64")}`,
+      },
+    }
+  )
+    .then((res) => res.json())
+    .catch((error) => console.log(error));
+  console.log("fetched files");
   response.items.map((item) => (item.path = item.path.slice(9)));
   console.log("Files fetched:", response.items);
   res.json(response.items);
@@ -18,6 +27,7 @@ fileRoute.get("/", async (req, res) => {
 fileRoute.post("/upload", fileUpload(), async (req, res) => {
   try {
     const result = await uploadFile(req.files);
+    const embeddings = chunk(req.files);
     res.status(200).json({ message: "File uploaded", url: result.url });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -28,7 +38,7 @@ fileRoute.get("/download/:file", async (req, res) => {
   const file = req.params.file;
   try {
     const response = await fetch(
-      `http://localhost:8081/repository/Files/uploads/${file}`,
+      `http://Sonatype:8081/repository/Files/uploads/${file}`,
       {
         headers: {
           Authorization: "Basic YWRtaW46YWRtaW4=",
@@ -55,7 +65,7 @@ fileRoute.get("/download/:file", async (req, res) => {
 fileRoute.delete("/delete", express.json(), async (req, res) => {
   const id = req.body.id;
   const response = await fetch(
-    `http://localhost:8081/service/rest/v1/assets/${id}`,
+    `http://Sonatype:8081/service/rest/v1/assets/${id}`,
     {
       method: "DELETE",
       headers: {

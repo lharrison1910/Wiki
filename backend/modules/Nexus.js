@@ -5,7 +5,7 @@ export const uploadFile = async (fileData) => {
     throw new Error("No file uploaded");
   }
 
-  const URL = `http://localhost:8081/repository/Files/uploads/${file.name}`;
+  const URL = `http://Sonatype:8081/repository/Files/uploads/${file.name}`;
   const username = "admin";
   const password = "admin";
 
@@ -35,7 +35,7 @@ export const uploadFile = async (fileData) => {
 
 export const download = async (filename) => {
   const result = await fetch(
-    `http://localhost:8081/repository/Files/${filename}`,
+    `http://Sonatype:8081/repository/Files/${filename}`,
     {
       headers: {
         Authorization: "Basic YWRtaW46YWRtaW4=",
