@@ -3,7 +3,8 @@ import fileUpload from "express-fileupload";
 import { uploadFile } from "../modules/Nexus.js";
 import { pipeline } from "stream/promises";
 import { chunk } from "../modules/ChunkEmbed.js";
-import { addEmbedding } from "../modules/db.js";
+import { addEmbedding, addFile, fetchFiles } from "../modules/db.js";
+import { version } from "os";
 
 export const fileRoute = express.Router();
 
@@ -32,40 +33,37 @@ fileRoute.get("/", async (req, res) => {
 
 fileRoute.post("/upload", fileUpload(), async (req, res) => {
   try {
-    const result = await uploadFile(req.files);
-    embed(req.files.file.name);
+    const versions = await fetchFiles({
+      "fileData.name": req.files.file.name,
+    });
+    const split = req.files.file.name.split(".");
+    const file = {
+      originalName: req.files.file.name,
+      name: `${split[0]}_v${versions.items.length + 1}.${split[1]}`,
+      data: req.files.file.data,
+      size: req.files.file.size,
+      encoding: req.files.file.encoding,
+      tempFilePath: req.files.file.tempFilePath,
+      truncated: req.files.file.truncated,
+      mimetype: req.files.file.mimetype,
+      md5: req.files.file.md5,
+      mv: req.files.file.mv,
+    };
+    const result = await uploadFile(file);
+    const uploadResult = await addFile({
+      fileData: req.files.file,
+      url: result.url,
+      version: versions.items.length + 1,
+    });
     res.status(200).json({ message: "File uploaded", url: result.url });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-fileRoute.get("/download/:file", async (req, res) => {
-  const file = req.params.file;
-  try {
-    const response = await fetch(
-      `http://Sonatype:8081/repository/Files/uploads/${file}`,
-      {
-        headers: {
-          Authorization: "Basic YWRtaW46YWRtaW4=",
-        },
-      }
-    );
-    if (!response.ok) {
-      console.log(await response.text());
-      return res.status(response.status).send("Failed to download from Nexus");
-    }
-    res.setHeader(
-      "Content-Type",
-      response.headers.get("content-type") || "application/pdf"
-    );
-    res.setHeader("Content-Disposition", `attachment; filename="${file}"`);
-    // Stream the file from Nexus to client
-    await pipeline(response.body, res);
-  } catch (err) {
-    console.error("Download error:", err);
-    res.status(500).send("Error downloading file");
-  }
+fileRoute.get("/download/", express.json(), async (req, res) => {
+  const url = req.body.url;
+  download(url);
 });
 
 fileRoute.delete("/delete", express.json(), async (req, res) => {

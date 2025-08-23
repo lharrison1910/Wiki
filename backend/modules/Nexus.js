@@ -1,11 +1,9 @@
-export const uploadFile = async (fileData) => {
-  const file = fileData?.file;
-
+export const uploadFile = async (file) => {
   if (!file) {
     throw new Error("No file uploaded");
   }
 
-  const URL = `http://localhost:8081/repository/Files/uploads/${file.name}`;
+  const URL = `http://localhost:8081/repository/Files/${file.originalName}/${file.name}`;
   const username = "admin";
   const password = "admin";
 
@@ -33,18 +31,26 @@ export const uploadFile = async (fileData) => {
   };
 };
 
-export const download = async (filename) => {
-  const result = await fetch(
-    `http://localhost:8081/repository/Files/${filename}`,
-    {
+export const download = async (url) => {
+  try {
+    const response = await fetch(url, {
       headers: {
         Authorization: "Basic YWRtaW46YWRtaW4=",
       },
+    });
+    if (!response.ok) {
+      console.log(await response.text());
+      return res.status(response.status).send("Failed to download from Nexus");
     }
-  );
-
-  const blob = await result.blob();
-  const file = new File([blob], filename, { type: blob.type });
-
-  return file;
+    res.setHeader(
+      "Content-Type",
+      response.headers.get("content-type") || "application/pdf"
+    );
+    res.setHeader("Content-Disposition", `attachment; filename="${file}"`);
+    // Stream the file from Nexus to client
+    await pipeline(response.body, res);
+  } catch (err) {
+    console.error("Download error:", err);
+    res.status(500).send("Error downloading file");
+  }
 };
