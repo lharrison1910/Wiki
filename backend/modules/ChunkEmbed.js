@@ -9,17 +9,17 @@ export const chunk = async (document) => {
   const loader = new WebPDFLoader(response);
   const docs = await loader.load();
   let chunks = [];
-  const chunk = await Promise.all(
-    docs.map(async (doc, index) => {
-      const embedding = await embed(doc.pageContent.trim());
-      console.log(`embed complete of chunks ${index}`);
-      return {
-        pageContent: doc.pageContent,
-        loc: doc.metadata.loc,
-        embedding,
-      };
-    })
-  );
 
-  chunks.push(...chunk);
+  for (let i = 0; i < docs.length; i++) {
+    const embedding = await embed(docs[i].pageContent.trim());
+    console.log(`embed complete of chunk ${i}`);
+    chunks.push({
+      pageContent: docs[i].pageContent,
+      loc: docs[i].metadata.loc,
+      embeddings: embedding.embeddings[0],
+    });
+  }
+
+  console.log("All chunks embedded");
+  return chunks;
 };

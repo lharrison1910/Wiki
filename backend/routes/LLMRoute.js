@@ -7,6 +7,11 @@ export const LLMRoute = express.Router();
 LLMRoute.post("/chat", express.json(), async (req, res) => {
   try {
     const vectorResponse = await querySearch(req.body.query);
+    console.log(vectorResponse, "vector");
+    console.log(
+      `You are to answer this question: ${req.body.query} based off this context ${vectorResponse}`,
+      "query"
+    );
     const prompt = `You are to answer this question: ${req.body.query} based off this context ${vectorResponse}`;
     const response = await chat(prompt);
     res.send(response);

@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 dotenv.config({ path: ".env" });
 
-const URL = process.env.MONGOSTRING;
+const URL = process.env.MONGOSTRING_PROD;
 
 const client = new MongoClient(URL);
 const database = client.db("Wiki");
@@ -55,5 +55,6 @@ export const addEmbedding = async (embeddings) => {
     }
   } catch (error) {
     console.log(error);
+    return { error: "Failed to add embeddings" };
   }
 };

@@ -43,11 +43,11 @@ function TableView(props: {
 
   return (
     <>
-      <Table sx={{ width: 2 / 3, bgcolor: "white", margin: 4 }}>
+      <Table sx={{ width: 1 / 2, bgcolor: "white", margin: 4 }}>
         <TableHead>
           <TableRow>
             {headers.map((header) => (
-              <TableCell align="center" key={header}>
+              <TableCell align="center" key={header} sx={{ color: "black" }}>
                 {header}
               </TableCell>
             ))}
@@ -57,9 +57,13 @@ function TableView(props: {
         <TableBody>
           {files.map((file: FileType) => (
             <TableRow key={file.id}>
-              <TableCell align="center">{file.path}</TableCell>
-              <TableCell align="center">{file.fileSize}</TableCell>
-              <TableCell align="center">
+              <TableCell align="center" sx={{ color: "black" }}>
+                {file.path}
+              </TableCell>
+              <TableCell align="center" sx={{ color: "black" }}>
+                {file.fileSize}
+              </TableCell>
+              <TableCell align="center" sx={{ color: "black" }}>
                 <IconButton
                   name={file.id}
                   onClick={(event) => {
@@ -67,7 +71,7 @@ function TableView(props: {
                     handleSelect(event.currentTarget.name);
                   }}
                 >
-                  <MoreVert />
+                  <MoreVert sx={{ color: "black" }} />
                 </IconButton>
               </TableCell>
             </TableRow>

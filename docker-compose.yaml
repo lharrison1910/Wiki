@@ -14,16 +14,18 @@ services:
   #   volumes:
   #     - mongo:/data/db
 
-  # ollama:
-  #   container_name: wiki-llama3.2
-  #   image: ollama/ollama:latest
-  #   volumes:
-  #     - ollama:/root/.ollama
-  #   tty: true
-  #   restart: unless-stopped
-  #   networks:
-  #     - wiki-backend
-  #   command: "ollama pull llama3.2"
+  ollama:
+    container_name: wiki-llama3.2
+    image: ollama/ollama:latest
+    volumes:
+      - ollama:/root/.ollama
+    tty: true
+    restart: unless-stopped
+    networks:
+      - wiki
+    ports:
+      - "11434:11434"
+    #command: "ollama pull llama3.2"
 
   backend:
     container_name: wiki-backend
@@ -54,7 +56,7 @@ services:
 
 volumes:
   # mongo: {}
-  # ollama: {}
+  ollama: {}
   nexus-data: {}
 
 networks:

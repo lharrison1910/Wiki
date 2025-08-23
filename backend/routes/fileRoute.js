@@ -3,13 +3,19 @@ import fileUpload from "express-fileupload";
 import { uploadFile } from "../modules/Nexus.js";
 import { pipeline } from "stream/promises";
 import { chunk } from "../modules/ChunkEmbed.js";
+import { addEmbedding } from "../modules/db.js";
 
 export const fileRoute = express.Router();
+
+const embed = async (filename) => {
+  const embeddings = await chunk(filename);
+  await addEmbedding(embeddings);
+};
 
 fileRoute.get("/", async (req, res) => {
   console.log("fetching files");
   const response = await fetch(
-    "http://Sonatype:8081/service/rest/v1/assets?repository=Files",
+    "http://localhost:8081/service/rest/v1/assets?repository=Files",
     {
       headers: {
         Authorization: `Basic ${Buffer.from(`admin:admin`).toString("base64")}`,
@@ -27,7 +33,7 @@ fileRoute.get("/", async (req, res) => {
 fileRoute.post("/upload", fileUpload(), async (req, res) => {
   try {
     const result = await uploadFile(req.files);
-    const embeddings = chunk(req.files);
+    embed(req.files.file.name);
     res.status(200).json({ message: "File uploaded", url: result.url });
   } catch (error) {
     res.status(500).json({ error: error.message });

@@ -6,6 +6,7 @@ import { AttachFile } from "@mui/icons-material";
 import TableView from "../../components/TableView/TableView";
 
 import "./homepage.css";
+import AI from "../../components/AIPopup/AI";
 
 function Homepage() {
   const [files, setFiles] = useState<FileType[]>([]);
@@ -61,7 +62,7 @@ function Homepage() {
     <>
       <div className="homepage">
         <Autocomplete
-          sx={{ width: 1 / 2, bgcolor: "white", borderRadius: 6 }}
+          sx={{ width: 1 / 2, borderRadius: 6 }}
           disablePortal
           onChange={(_event, newValue) => handleFilter(newValue)}
           options={files.map((file: FileType) => file.path)}
@@ -89,6 +90,10 @@ function Homepage() {
             onChange={(event) => handleAdd(event)}
           />
         </Button>
+
+        <div>
+          <AI />
+        </div>
         {/*Feedback*/}
         <div>
           {errorMsg != null ? (

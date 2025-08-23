@@ -14,17 +14,18 @@ export const querySearch = async (query) => {
   const results = embeddingDB.aggregate([
     {
       $vectorSearch: {
-        index: "vector_index",
-        path: "embedding",
-        queryVector: embeddedQuery.embeddings[0],
+        index: "VectorSearch",
+        path: "embedding.embeddings",
+        queryVector: 768,
         numCandidates: 100,
-        limit: 5,
+        limit: 10,
       },
     },
   ]);
 
   const response = [];
   for await (const doc of results) {
+    console.log(doc);
     response.push(doc.content);
   }
 
