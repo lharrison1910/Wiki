@@ -1,13 +1,19 @@
 import { filesClient } from "../client/client";
 
-export const download = async (path: string) => {
+export const download = async (url: string) => {
   try {
-    await fetch(`${filesClient}/download/${path}`).then((res) => {
+    await fetch(`${filesClient}/file/download`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify({ url }),
+    }).then((res) => {
       res.blob().then((blob) => {
         const fileURL = window.URL.createObjectURL(blob);
         const alink = document.createElement("a");
         alink.href = fileURL;
-        alink.download = path;
+        alink.download = url;
         alink.click();
       });
     });

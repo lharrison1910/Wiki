@@ -1,11 +1,9 @@
-export const uploadFile = async (fileData) => {
-  const file = fileData?.file;
-
-  if (!file) {
+export const uploadFile = async (fileData, newName) => {
+  if (!fileData) {
     throw new Error("No file uploaded");
   }
 
-  const URL = `http://localhost:8081/repository/Files/uploads/${file.name}`;
+  const URL = `http://localhost:8081/repository/Files/${fileData.name}/${newName}`;
   const username = "admin";
   const password = "admin";
 
@@ -13,11 +11,11 @@ export const uploadFile = async (fileData) => {
   const response = await fetch(URL, {
     method: "PUT",
     headers: {
-      "Content-Type": file.mimetype,
+      "Content-Type": fileData.mimetype,
       Authorization:
         "Basic " + Buffer.from(`${username}:${password}`).toString("base64"),
     },
-    body: file.data,
+    body: fileData.data,
   });
 
   if (!response.ok) {
@@ -33,18 +31,19 @@ export const uploadFile = async (fileData) => {
   };
 };
 
-export const download = async (filename) => {
-  const result = await fetch(
-    `http://localhost:8081/repository/Files/${filename}`,
-    {
+export const download = async (url) => {
+  try {
+    const response = await fetch(url, {
       headers: {
         Authorization: "Basic YWRtaW46YWRtaW4=",
       },
+    });
+    if (!response.ok) {
+      throw new Error(response.statusText);
     }
-  );
-
-  const blob = await result.blob();
-  const file = new File([blob], filename, { type: blob.type });
-
-  return file;
+    return response;
+  } catch (err) {
+    console.error("Download error:", err);
+    throw new Error(`Download failed: ${err.message}`);
+  }
 };

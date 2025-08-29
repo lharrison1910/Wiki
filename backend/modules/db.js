@@ -1,18 +1,19 @@
 import { MongoClient, ObjectId } from "mongodb";
 import dotenv from "dotenv";
+// import { uploadFile } from "./Nexus";
 
 dotenv.config({ path: ".env" });
 
-const URL = process.env.MONGOSTRING_PROD;
+const URL = process.env.MONGOSTRING;
 
 const client = new MongoClient(URL);
 const database = client.db("Wiki");
 const fileDB = database.collection("FileData");
 const embedDB = database.collection("embeddingData");
 
-export const fetchFiles = async () => {
+export const fetchFiles = async (query) => {
   try {
-    const files = await fileDB.find({}).toArray();
+    const files = await fileDB.find(query).toArray();
     return { items: files };
   } catch (error) {
     console.error("Error fetching files:", error);

@@ -6,7 +6,7 @@ import { AttachFile } from "@mui/icons-material";
 import TableView from "../../components/TableView/TableView";
 
 import "./homepage.css";
-import AI from "../../components/AIPopup/AI";
+//import AI from "../../components/AIPopup/AI";
 
 function Homepage() {
   const [files, setFiles] = useState<FileType[]>([]);
@@ -90,10 +90,10 @@ function Homepage() {
             onChange={(event) => handleAdd(event)}
           />
         </Button>
-
+        {/* 
         <div>
           <AI />
-        </div>
+        </div> */}
         {/*Feedback*/}
         <div>
           {errorMsg != null ? (
